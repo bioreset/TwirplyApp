@@ -10,7 +10,9 @@ data class Entity(
     @field:Json(name = "description")
     val description: Description?,
     @field:Json(name = "mentions")
-    val mentions: List<Mentions>?
+    val mentions: List<Mentions>?,
+    @field:Json(name = "hashtags")
+    val hashtags: List<Hashtags>?
 )
 
 @JsonClass(generateAdapter = true)

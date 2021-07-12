@@ -17,16 +17,19 @@ constructor(
     private val searchRepository: SearchRepository
 ) : ViewModel() {
 
-    private var _searchResults = MutableStateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>>(ResponseState.Idle)
-    val finalSearchResults: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>> = _searchResults
+    private var _searchResults =
+        MutableStateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>>(
+            ResponseState.Idle
+        )
+    val finalSearchResults: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>> =
+        _searchResults
 
     fun fetchSearchResultsForQuery(query: String) = viewModelScope.launch {
         _searchResults.value = ResponseState.Loading
         val results = searchRepository.returnSearchResults(query)
         try {
             _searchResults.value = ResponseState.Success(results)
-        }
-        catch (exception: Exception) {
+        } catch (exception: Exception) {
             _searchResults.value = ResponseState.Error(exception)
         }
     }

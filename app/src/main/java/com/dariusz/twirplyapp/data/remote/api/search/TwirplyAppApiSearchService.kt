@@ -1,8 +1,7 @@
 package com.dariusz.twirplyapp.data.remote.api.search
 
-import com.dariusz.twirplyapp.di.NetworkModule.provideRetrofit
+import com.dariusz.twirplyapp.di.NetworkModule.provideRetrofitSearch
 import com.dariusz.twirplyapp.domain.model.*
-import kotlin.Error
 
 interface TwirplyAppApiSearchService {
 
@@ -12,7 +11,7 @@ interface TwirplyAppApiSearchService {
 
 class TwirplyAppApiSearchServiceImpl : TwirplyAppApiSearchService {
 
-    private val retrofit = provideRetrofit(TwirplyAppApiSearch::class.java)
+    private val retrofit = provideRetrofitSearch()
 
     override suspend fun getTweetsDataBasedOnSearchInput(input: String) =
         retrofit.fetchTweetsDataBasedOnSearchInput(input)

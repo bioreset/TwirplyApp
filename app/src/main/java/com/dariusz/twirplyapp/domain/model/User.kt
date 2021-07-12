@@ -15,7 +15,7 @@ data class User(
     val username: String,
     @field:Json(name = "profile_image_url")
     val profileImageUrl: String,
-    @field:Json(name = "parameter")
+    @field:Json(name = "description")
     val description: String,
     @field:Json(name = "verified")
     val isVerified: Boolean,
@@ -24,7 +24,9 @@ data class User(
     @field:Json(name = "url")
     val url: String,
     @field:Json(name = "pinned_tweet_id")
-    val pinnedTweetID: String?
+    val pinnedTweetID: String?,
+    @field:Json(name = "public_metrics")
+    val publicMetrics: PublicMetricsUser
 )
 
 @JsonClass(generateAdapter = true)
@@ -39,4 +41,27 @@ data class UserMinimum(
     val profileImageUrl: String,
     @field:Json(name = "verified")
     val isVerified: Boolean
+) {
+    companion object {
+        fun minimizeUser(user: User): UserMinimum =
+            UserMinimum(
+                user.id,
+                user.name,
+                user.username,
+                user.profileImageUrl,
+                user.isVerified
+            )
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class PublicMetricsUser(
+    @field:Json(name = "followers_count")
+    val followersCount: Int,
+    @field:Json(name = "following_count")
+    val followingCount: Int,
+    @field:Json(name = "tweet_count")
+    val tweetCount: Int,
+    @field:Json(name = "listed_count")
+    val listedCount: Int
 )

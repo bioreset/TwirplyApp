@@ -24,7 +24,9 @@ data class Tweet(
     @field:Json(name = "attachments")
     val attachments: List<Attachments>?,
     @field:Json(name = "referenced_tweets")
-    val referencedTweets: List<ReferencedTweets>?
+    val referencedTweets: List<ReferencedTweets>?,
+    @field:Json(name = "public_metrics")
+    val publicMetrics: PublicMetricsTweet
 )
 
 @JsonClass(generateAdapter = true)
@@ -43,3 +45,14 @@ data class ReferencedTweets(
     val tweetID: String
 )
 
+@JsonClass(generateAdapter = true)
+data class PublicMetricsTweet(
+    @field:Json(name = "retweet_count")
+    val retweetCount: Int,
+    @field:Json(name = "reply_count")
+    val replyCount: Int,
+    @field:Json(name = "like_count")
+    val likesCount: Int,
+    @field:Json(name = "quote_count")
+    val quoteCount: Int
+)

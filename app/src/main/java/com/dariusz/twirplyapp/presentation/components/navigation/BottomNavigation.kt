@@ -17,7 +17,14 @@ fun BottomBar(navController: NavController) {
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
             BottomNavigationItem(
-                icon = { item.icon?.let { Icon(imageVector = it, contentDescription = item.title) } },
+                icon = {
+                    item.icon?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = item.title
+                        )
+                    }
+                },
                 label = { Text(text = item.title) },
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,

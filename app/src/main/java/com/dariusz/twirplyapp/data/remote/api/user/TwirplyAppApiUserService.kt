@@ -1,6 +1,6 @@
 package com.dariusz.twirplyapp.data.remote.api.user
 
-import com.dariusz.twirplyapp.di.NetworkModule.provideRetrofit
+import com.dariusz.twirplyapp.di.NetworkModule.provideRetrofitUser
 import com.dariusz.twirplyapp.domain.model.*
 
 interface TwirplyAppApiUserService {
@@ -13,7 +13,7 @@ interface TwirplyAppApiUserService {
 
 class TwirplyAppApiUserServiceImpl : TwirplyAppApiUserService {
 
-    private val retrofit = provideRetrofit(TwirplyAppApiUser::class.java)
+    private val retrofit = provideRetrofitUser()
 
     override suspend fun getAllUserDataBasedOnId(id: Int) = retrofit.fetchAllUserDataBasedOnId(id)
 

@@ -1,9 +1,12 @@
 package com.dariusz.twirplyapp.di
 
+import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearch
 import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchService
 import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweet
 import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweetService
 import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweetServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUser
 import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserService
 import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserServiceImpl
 import com.dariusz.twirplyapp.utils.Constants.API_URL
@@ -24,12 +27,11 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 object NetworkModule {
 
     @Provides
-    fun <T> provideRetrofit(
-        apiInterface: Class<T>,
+    fun provideRetrofitService(
         tokenLess: Boolean = false,
         useNetworkInterceptor: Boolean = true
-    ): T {
-        val token = " //TODO BEARER TOKEN"
+    ): Retrofit {
+        val token = "//TODO"
         val logging: Interceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
             level = HttpLoggingInterceptor.Level.BODY
@@ -58,8 +60,20 @@ object NetworkModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(client!!)
             .build()
-            .create(apiInterface)
     }
+
+    @Provides
+    fun provideRetrofitSearch(): TwirplyAppApiSearch =
+        provideRetrofitService().create(TwirplyAppApiSearch::class.java)
+
+    @Provides
+    fun provideRetrofitTweet(): TwirplyAppApiTweet =
+        provideRetrofitService().create(TwirplyAppApiTweet::class.java)
+
+    @Provides
+    fun provideRetrofitUser(): TwirplyAppApiUser =
+        provideRetrofitService().create(TwirplyAppApiUser::class.java)
+
 
     @Provides
     fun provideTwirplyAppApiTweetService(): TwirplyAppApiTweetService =

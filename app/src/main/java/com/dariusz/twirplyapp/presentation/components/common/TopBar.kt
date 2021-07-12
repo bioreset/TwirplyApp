@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TopBar(){
+fun TopBar() {
     TopAppBar(
         title = { Text("TwirplyApp") },
         backgroundColor = MaterialTheme.colors.surface,
