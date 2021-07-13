@@ -13,13 +13,12 @@ import com.dariusz.twirplyapp.di.RepositoryModule.provideUserRepository
 import com.dariusz.twirplyapp.presentation.MainViewModel
 import com.dariusz.twirplyapp.presentation.MainViewModelFactory
 import com.dariusz.twirplyapp.presentation.screens.feed.FeedScreen
-import com.dariusz.twirplyapp.presentation.screens.profile.ProfileScreen
+import com.dariusz.twirplyapp.presentation.screens.profile.*
 import com.dariusz.twirplyapp.presentation.screens.search.SearchResults
 import com.dariusz.twirplyapp.presentation.screens.search.SearchScreen
 import com.dariusz.twirplyapp.presentation.screens.search.SearchScreenViewModel
 import com.dariusz.twirplyapp.presentation.screens.search.SearchScreenViewModelFactory
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreen
-import com.dariusz.twirplyapp.utils.Constants.PROFILE_ID_FOR_TESTS
 
 @ExperimentalComposeUiApi
 @Composable
@@ -31,7 +30,11 @@ fun MainNavigationHost(navController: NavController) {
     )
     val mainViewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory(
-            provideTweetRepository(),
+            provideTweetRepository()
+        )
+    )
+    val profileScreenViewModel: ProfileScreenViewModel = viewModel(
+        factory = ProfileScreenViewModelFactory(
             provideUserRepository()
         )
     )
@@ -52,11 +55,30 @@ fun MainNavigationHost(navController: NavController) {
                 navController
             )
         }
-        composable(route = Screens.AppScreens.ProfileScreen.route) {
-            ProfileScreen(PROFILE_ID_FOR_TESTS, mainViewModel, navController)
+        composable(route = Screens.AppScreens.ProfileScreen.route.plus("/{user_id}")) {
+            ProfileScreen(
+                it.arguments?.getLong("user_id") ?: 0,
+                profileScreenViewModel,
+                mainViewModel,
+                navController
+            )
+        }
+        composable(route = Screens.AppScreens.FollowersScreen.route.plus("/{user_id}")) {
+            FollowersScreen(
+                it.arguments?.getLong("user_id") ?: 0,
+                profileScreenViewModel,
+                navController
+            )
+        }
+        composable(route = Screens.AppScreens.FollowingScreen.route.plus("/{user_id}")) {
+            FollowingScreen(
+                it.arguments?.getLong("user_id") ?: 0,
+                profileScreenViewModel,
+                navController
+            )
         }
         composable(route = Screens.AppScreens.TweetScreen.route.plus("/{tweet_id}")) {
-            TweetScreen(it.arguments?.getLong("tweet_id") ?: 0, mainViewModel)
+            TweetScreen(it.arguments?.getLong("tweet_id") ?: 0, mainViewModel, navController)
         }
     }
 }

@@ -14,5 +14,5 @@ data class Includes(
     @field:Json(name = "tweets")
     val tweet: List<Tweet>? = null,
     @field:Json(name = "users")
-    val user: List<User>? = null
+    val user: List<UserMinimum>? = null
 )

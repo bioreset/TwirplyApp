@@ -25,8 +25,7 @@ object RepositoryModule {
 
     @Provides
     fun provideTweetRepository(): TweetRepository = TweetRepositoryImpl(
-        provideTwirplyAppApiTweetService(),
-        provideTwirplyAppApiUserService()
+        provideTwirplyAppApiTweetService()
     )
 
     @Provides

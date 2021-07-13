@@ -5,7 +5,9 @@ import com.dariusz.twirplyapp.domain.model.*
 
 interface TwirplyAppApiSearchService {
 
-    suspend fun getTweetsDataBasedOnSearchInput(input: String): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
+    suspend fun getRecentTweetsDataBasedOnSearchInput(input: String): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
+
+    suspend fun getAllTweetsDataBasedOnSearchInput(input: String): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
 }
 
@@ -13,7 +15,9 @@ class TwirplyAppApiSearchServiceImpl : TwirplyAppApiSearchService {
 
     private val retrofit = provideRetrofitSearch()
 
-    override suspend fun getTweetsDataBasedOnSearchInput(input: String) =
-        retrofit.fetchTweetsDataBasedOnSearchInput(input)
+    override suspend fun getRecentTweetsDataBasedOnSearchInput(input: String) =
+        retrofit.fetchRecentTweetsDataBasedOnSearchInput(input)
 
+    override suspend fun getAllTweetsDataBasedOnSearchInput(input: String) =
+        retrofit.fetchRecentTweetsDataBasedOnSearchInput(input)
 }

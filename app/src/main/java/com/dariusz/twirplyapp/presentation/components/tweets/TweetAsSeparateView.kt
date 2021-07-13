@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.dariusz.twirplyapp.domain.model.Includes
 import com.dariusz.twirplyapp.domain.model.Tweet
 import com.dariusz.twirplyapp.domain.model.UserMinimum
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
@@ -21,19 +22,23 @@ import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 fun DisplayTweetSeparate(
     tweetContent: Tweet?,
     authorInfo: UserMinimum?,
+    includesFromResponse: Includes?,
     navController: NavController
 ) = TweetBuilderSeparate(
     tweetContentFromResponse = tweetContent,
     authorInfoFromResponse = authorInfo,
+    includesFromResponse = includesFromResponse,
     authorProfilePicture = { AuthorPicture(it) },
-    authorandTweetInformation = {
+    authorandTweetInformation = { author, tweet ->
         AuthorInfoAndOther(
-            authorInfo,
-            tweetContent,
+            author,
+            tweet,
             null
         )
     },
-    tweetIconContent = { TweetActions(it) },
+    tweetIconContent = { tweet, nav ->
+        TweetActions(tweet, nav)
+    },
     tweetDivider = { Divider(thickness = 0.5.dp) },
     actionOnClick = {
         navigateToWithArgument(
@@ -41,20 +46,22 @@ fun DisplayTweetSeparate(
             Screens.AppScreens.TweetScreen.route,
             it.toString()
         )
-    }
+    },
+    navController = navController
 )
 
 @Composable
 fun TweetBuilderSeparate(
     tweetContentFromResponse: Tweet?,
     authorInfoFromResponse: UserMinimum?,
+    includesFromResponse: Includes?,
     authorProfilePicture: @Composable (UserMinimum) -> Unit,
-    authorandTweetInformation: @Composable () -> Unit,
-    tweetIconContent: @Composable (Tweet) -> Unit,
+    authorandTweetInformation: @Composable (UserMinimum, Tweet) -> Unit,
+    tweetIconContent: @Composable (Tweet, NavController) -> Unit,
     tweetDivider: @Composable () -> Unit,
-    actionOnClick: (Int) -> Unit
+    actionOnClick: (Int) -> Unit,
+    navController: NavController
 ) {
-
     Row(
         Modifier.clickable(enabled = true, onClick = {
             tweetContentFromResponse?.id?.let {
@@ -72,23 +79,33 @@ fun TweetBuilderSeparate(
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
-            authorandTweetInformation.invoke()
+            if (authorInfoFromResponse != null && tweetContentFromResponse != null) {
+                authorandTweetInformation.invoke(authorInfoFromResponse, tweetContentFromResponse)
+            }
             if (tweetContentFromResponse != null) {
                 TweetMainContent(
                     tweetData = tweetContentFromResponse,
                     tweetIncludes = null,
-                    tweetDisplayTextOnly = {
+                    tweetDisplayText = {
+                        HashtagsAndMentionsInTweet(it.content, it.entities[0], navController)
                         Text(text = it.content, style = MaterialTheme.typography.body1)
                     },
                     tweetDisplayImage = {
                         TweetImage(it)
                     },
-                    tweetDisplayPoll = {},
-                    tweetDisplayMedia = {}
+                    tweetDisplayMedia = {
+                        includesFromResponse?.media?.let { mediaObject -> TweetMedia(mediaObject) }
+                    },
+                    tweetDisplayPoll = {
+                        includesFromResponse?.poll?.let { pollObject -> TweetPoll(pollObject) }
+                    },
+                    tweetDisplayMentionedTweet = {
+                        TweetMentioned(it)
+                    }
                 )
             }
             if (tweetContentFromResponse != null) {
-                tweetIconContent.invoke(tweetContentFromResponse)
+                tweetIconContent.invoke(tweetContentFromResponse, navController)
             }
             tweetDivider.invoke()
         }

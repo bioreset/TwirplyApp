@@ -26,7 +26,7 @@ constructor(
 
     fun fetchSearchResultsForQuery(query: String) = viewModelScope.launch {
         _searchResults.value = ResponseState.Loading
-        val results = searchRepository.returnSearchResults(query)
+        val results = searchRepository.returnRecentSearchResults(query)
         try {
             _searchResults.value = ResponseState.Success(results)
         } catch (exception: Exception) {

@@ -20,6 +20,8 @@ sealed class Screens(val route: String, val title: String) {
         object SearchScreen : AppScreens("search", "Search", Icons.Default.Search)
         object SearchResults : AppScreens("searchresults", "Search Results", null)
         object ProfileScreen : AppScreens("profile", "Profile", Icons.Default.Person)
+        object FollowersScreen : AppScreens("followers", "Followers", null)
+        object FollowingScreen : AppScreens("following", "Following", null)
         object TweetScreen : AppScreens("tweet", "Tweet", null)
     }
 }

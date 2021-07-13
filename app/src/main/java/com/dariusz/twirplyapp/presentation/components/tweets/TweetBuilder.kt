@@ -10,46 +10,48 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.dariusz.twirplyapp.domain.model.*
 
 @Composable
 fun DisplayTweet(
     tweetContent: GenericResponse<Tweet?, Includes?, Errors?, Nothing>,
-    authorInfo: GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>
+    navController: NavController
 ) = TweetBuilder(
     tweetContentFromResponse = tweetContent,
-    authorInfoFromResponse = authorInfo,
     authorProfilePicture = { AuthorPicture(it) },
-    authorandTweetInformation = {
+    authorandTweetInformation = { author, tweet, tweetincludes ->
         AuthorInfoAndOther(
-            authorInfo.outputOne,
-            tweetContent.outputOne,
-            tweetContent.outputTwo
+            author,
+            tweet,
+            tweetincludes
         )
     },
-    tweetIconContent = { TweetActions(it) },
-    tweetDivider = { Divider(thickness = 0.5.dp) }
+    tweetIconContent = { tweet, nav ->
+        TweetActions(tweet, nav)
+    },
+    tweetDivider = { Divider(thickness = 0.5.dp) },
+    navController = navController
 )
 
 @Composable
 fun TweetBuilder(
     tweetContentFromResponse: GenericResponse<Tweet?, Includes?, Errors?, Nothing>,
-    authorInfoFromResponse: GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>,
     authorProfilePicture: @Composable (UserMinimum) -> Unit,
-    authorandTweetInformation: @Composable () -> Unit,
-    tweetIconContent: @Composable (Tweet) -> Unit,
-    tweetDivider: @Composable () -> Unit
+    authorandTweetInformation: @Composable (UserMinimum, Tweet, Includes) -> Unit,
+    tweetIconContent: @Composable (Tweet, NavController) -> Unit,
+    tweetDivider: @Composable () -> Unit,
+    navController: NavController
 ) {
     val tweetPostContent = tweetContentFromResponse.outputOne
-    val authorInformation = authorInfoFromResponse.outputOne
+    val authorInformation = tweetContentFromResponse.outputTwo?.user?.get(0)
 
     val tweetIncludes = tweetContentFromResponse.outputTwo
 
     val tweetError = tweetContentFromResponse.outputThree
-    val authorError = authorInfoFromResponse.outputThree
 
     Row {
-        if (tweetError == null && authorError == null) {
+        if (tweetError == null) {
             if (authorInformation != null) {
                 authorProfilePicture(authorInformation)
             }
@@ -59,11 +61,18 @@ fun TweetBuilder(
                     .fillMaxWidth()
             ) {
                 if (authorInformation != null && tweetPostContent != null) {
-                    authorandTweetInformation.invoke()
+                    if (tweetIncludes != null) {
+                        authorandTweetInformation.invoke(
+                            authorInformation,
+                            tweetPostContent,
+                            tweetIncludes
+                        )
+                    }
                     TweetMainContent(
                         tweetData = tweetPostContent,
                         tweetIncludes = tweetIncludes,
-                        tweetDisplayTextOnly = {
+                        tweetDisplayText = {
+                            HashtagsAndMentionsInTweet(it.content, it.entities[0], navController)
                             Text(text = it.content, style = MaterialTheme.typography.body1)
                         },
                         tweetDisplayImage = {
@@ -74,16 +83,18 @@ fun TweetBuilder(
                         },
                         tweetDisplayPoll = {
                             tweetIncludes?.poll?.let { pollObject -> TweetPoll(pollObject) }
+                        },
+                        tweetDisplayMentionedTweet = {
+                            TweetMentioned(it)
                         }
                     )
-                    tweetIconContent.invoke(tweetPostContent)
+                    tweetIconContent.invoke(tweetPostContent, navController)
                     tweetDivider.invoke()
                 }
             }
         } else {
             Text("Errors: ")
             Text(tweetError.toString())
-            Text(authorError.toString())
         }
     }
 }

@@ -3,12 +3,15 @@ package com.dariusz.twirplyapp.presentation.components.profile
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,12 +25,17 @@ import com.dariusz.twirplyapp.domain.model.Errors
 import com.dariusz.twirplyapp.domain.model.GenericResponse
 import com.dariusz.twirplyapp.domain.model.Includes
 import com.dariusz.twirplyapp.domain.model.User
+import com.dariusz.twirplyapp.presentation.components.navigation.Screens
+import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun ProfileFeed(
     user: GenericResponse<User?, Includes?, Errors?, Nothing>,
-    navController: NavController
+    tweets: @Composable (String) -> Unit,
+    mentions: @Composable (String) -> Unit,
+    navController: NavController,
+    actionFollow: (String) -> Unit
 ) {
     val userInfoFull = user.outputOne
     Column {
@@ -35,8 +43,17 @@ fun ProfileFeed(
             Spacer(modifier = Modifier.height(44.dp))
             if (userInfoFull != null) {
                 Avatar(user = userInfoFull)
-                UserInfo(user = userInfoFull)
-                FollowButton()
+                UserInfo(user = userInfoFull, navController)
+                FollowButton { actionFollow.invoke(userInfoFull.id) }
+                Spacer(modifier = Modifier.height(8.dp))
+                TabbedTweetsAndMentions(userInfoFull.id,
+                    tweets = {
+                        tweets.invoke(it)
+                    },
+                    mentions = {
+                        mentions.invoke(it)
+                    }
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -46,7 +63,7 @@ fun ProfileFeed(
 }
 
 @Composable
-fun UserInfo(user: User) {
+fun UserInfo(user: User, navController: NavController) {
     Text(
         text = user.name,
         style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -68,7 +85,15 @@ fun UserInfo(user: User) {
         )
         Text(
             text = "Following",
-            style = TextStyle(fontSize = 14.sp)
+            style = TextStyle(fontSize = 14.sp),
+            modifier = Modifier
+                .clickable(onClick = {
+                    navigateToWithArgument(
+                        navController,
+                        Screens.AppScreens.FollowingScreen.route,
+                        user.id
+                    )
+                })
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
@@ -77,7 +102,15 @@ fun UserInfo(user: User) {
         )
         Text(
             text = "Followers",
-            style = TextStyle(fontSize = 14.sp)
+            style = TextStyle(fontSize = 14.sp),
+            modifier = Modifier
+                .clickable(onClick = {
+                    navigateToWithArgument(
+                        navController,
+                        Screens.AppScreens.FollowersScreen.route,
+                        user.id
+                    )
+                })
         )
     }
 }
@@ -101,14 +134,49 @@ private fun Avatar(user: User) {
 }
 
 @Composable
-private fun FollowButton() {
+private fun FollowButton(actionFollow: () -> Unit) {
     Button(
         onClick = {
             //TODO FOLLOW ACTION
+            actionFollow.invoke()
         },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, MaterialTheme.colors.primary)
     ) {
         Text(text = "Follow")
     }
+}
+
+@Composable
+fun TabbedTweetsAndMentions(
+    userID: String,
+    tweets: @Composable (String) -> Unit,
+    mentions: @Composable (String) -> Unit
+) {
+
+    val currentlyShowing = remember(String) { mutableStateOf("tweets") }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Button(onClick = {
+            currentlyShowing.value = "tweets"
+        }) {
+            Text(
+                text = "Tweets"
+            )
+        }
+        Button(onClick = {
+            currentlyShowing.value = "mentions"
+        }) {
+            Text(
+                text = "Tweets and Mentions"
+            )
+        }
+    }
+    if (currentlyShowing.value == "tweets") tweets.invoke(userID)
+    else mentions.invoke(userID)
+
 }

@@ -20,8 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.transform.CircleCropTransformation
 import com.dariusz.twirplyapp.domain.model.*
+import com.dariusz.twirplyapp.utils.DateUtils.formatDate
 import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
@@ -58,7 +60,7 @@ fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?, includesData: 
             )
 
             Text(
-                text = userInfo.username + " . " + tweetInfo.createdAt +
+                text = userInfo.username + " . " + formatDate(tweetInfo.createdAt) +
                         " . " + tweetInfo.sourceApp + " . " + (includesData?.place?.fullName
                     ?: ""),
                 modifier = Modifier.padding(start = 8.dp),
@@ -192,7 +194,7 @@ fun TweetPoll(poll: Poll) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Votes amount: ${counter.value}")
-            Text("Time to end: ${poll.endTime}")
+            Text("Time to end: ${formatDate(poll.endTime)}")
         }
     }
 }
@@ -222,40 +224,55 @@ fun TweetMedia(media: Media) {
     }
 }
 
+@Composable
+fun TweetMentioned(tweetData: Tweet) {
+//TODO: CREATE MENTIONED TWEET UI
+}
+
 
 @Composable
 fun TweetMainContent(
     tweetData: Tweet,
     tweetIncludes: Includes?,
-    tweetDisplayTextOnly: @Composable (Tweet) -> Unit,
+    tweetDisplayText: @Composable (Tweet) -> Unit,
     tweetDisplayImage: @Composable (Tweet) -> Unit,
     tweetDisplayMedia: @Composable (Tweet) -> Unit,
     tweetDisplayPoll: @Composable (Tweet) -> Unit,
+    tweetDisplayMentionedTweet: @Composable (Tweet) -> Unit
 ) {
     val tweetEntitiesElement = tweetData.entities[0]
     if (tweetEntitiesElement.urls?.size == 0 &&
         tweetEntitiesElement.description.toString().isEmpty() &&
         tweetIncludes == null
     ) {
-        tweetDisplayTextOnly.invoke(tweetData)
+        tweetDisplayText.invoke(tweetData)
     } else if (tweetEntitiesElement.urls?.size == 1) {
         if (tweetIncludes != null) {
             when {
                 tweetIncludes.media.toString().isNotEmpty() -> {
+                    tweetDisplayText.invoke(tweetData)
                     tweetDisplayMedia.invoke(tweetData)
                 }
                 tweetIncludes.poll.toString().isNotEmpty() -> {
+                    tweetDisplayText.invoke(tweetData)
                     tweetDisplayPoll.invoke(tweetData)
                 }
             }
         } else {
+            tweetDisplayText.invoke(tweetData)
             tweetDisplayImage.invoke(tweetData)
+        }
+    } else if (tweetEntitiesElement.mentions?.isNotEmpty() == true) {
+        tweetDisplayText.invoke(tweetData)
+        if (tweetIncludes != null) {
+            tweetIncludes.tweet?.get(0)?.let { tweetDisplayMentionedTweet.invoke(it) }
         }
     }
 }
 
+
 @Composable
-fun TweetActions(tweet: Tweet) =
+fun TweetActions(tweet: Tweet, navController: NavController) =
     TweetIconSection(
         tweet = tweet,
         actionReply = { /*TODO*/ },

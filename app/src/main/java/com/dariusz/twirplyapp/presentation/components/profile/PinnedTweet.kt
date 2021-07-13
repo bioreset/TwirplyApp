@@ -16,9 +16,13 @@ fun PinnedTweet(
 ) {
     val authorInfo = user.outputOne
     val pinnedTweetInfo = user.outputTwo?.tweet?.get(0)
-    DisplayTweetSeparate(tweetContent = pinnedTweetInfo, authorInfo = authorInfo?.let {
-        minimizeUser(
-            it
-        )
-    }, navController = navController)
+    val includes = user.outputTwo
+    DisplayTweetSeparate(
+        tweetContent = pinnedTweetInfo, authorInfo = authorInfo?.let {
+            minimizeUser(
+                it
+            )
+        },
+        includesFromResponse = includes, navController = navController
+    )
 }

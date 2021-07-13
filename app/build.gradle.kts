@@ -58,6 +58,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation("com.google.accompanist:accompanist-coil:0.13.0")
+    implementation("com.google.accompanist:accompanist-pager:0.13.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.13.0")
 
     implementation("com.google.dagger:hilt-android:2.37")
     kapt("com.google.dagger:hilt-android-compiler:2.37")

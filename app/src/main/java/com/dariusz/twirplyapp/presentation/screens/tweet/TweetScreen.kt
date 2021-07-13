@@ -3,8 +3,8 @@ package com.dariusz.twirplyapp.presentation.screens.tweet
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.dariusz.twirplyapp.domain.model.ResponseState
-import com.dariusz.twirplyapp.domain.model.TweetWithAuthor
+import androidx.navigation.NavController
+import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.MainViewModel
 import com.dariusz.twirplyapp.presentation.components.common.LoadingComponent
 import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweet
@@ -12,7 +12,8 @@ import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweet
 @Composable
 fun TweetScreen(
     tweetID: Long,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel = viewModel(),
+    navController: NavController
 ) {
 
     val tweetIDToDisplay = remember { mutableStateOf(tweetID) }
@@ -25,12 +26,13 @@ fun TweetScreen(
         mainViewModel.getAllTweetData(tweetIDToDisplay.value.toInt())
     }
 
-    ManageTweetScreen(tweet = fullTweetData)
+    ManageTweetScreen(tweet = fullTweetData, navController)
 }
 
 @Composable
 fun ManageTweetScreen(
-    tweet: ResponseState<TweetWithAuthor>
+    tweet: ResponseState<GenericResponse<Tweet?, Includes?, Errors?, Nothing>>,
+    navController: NavController
 ) {
 
     when (tweet) {
@@ -38,7 +40,10 @@ fun ManageTweetScreen(
             LoadingComponent()
         }
         is ResponseState.Success -> {
-            DisplayTweet(tweet.data.responseWithTweet, tweet.data.responseWithAuthor)
+            DisplayTweet(
+                tweet.data,
+                navController = navController
+            )
         }
         is ResponseState.Error -> {
             Text("Tweet Error")
