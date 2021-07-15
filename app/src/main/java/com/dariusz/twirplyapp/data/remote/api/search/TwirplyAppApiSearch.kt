@@ -8,22 +8,11 @@ import retrofit2.http.Query
 
 interface TwirplyAppApiSearch {
 
-    @GET("/tweets/search/recent?")
+    @GET("2/tweets/search/recent?")
     suspend fun fetchRecentTweetsDataBasedOnSearchInput(
         @Query("query") searchQuery: String,
-        @Query("expansions") tweetExpansions: String = Constants.API_EXPANSIONS,
-        @Query("tweet.fields") tweetFields: String = API_TWEET_FIELDS,
-        @Query("poll.fields") tweetPoll: String? = Constants.API_POLL_FIELDS,
-        @Query("media.fields") tweetMedia: String? = Constants.API_MEDIA_FIELDS,
-        @Query("place.fields") tweetPlace: String? = Constants.API_PLACE_FIELDS,
-        @Query("user.fields") tweetUser: String = Constants.API_USER_FIELDS_COMPACT
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
-
-    @GET("/tweets/search/all?")
-    suspend fun fetchAllTweetsDataBasedOnSearchInput(
-        @Query("query") searchQuery: String,
-        @Query("expansions") tweetExpansions: String = Constants.API_EXPANSIONS,
-        @Query("tweet.fields") tweetFields: String = API_TWEET_FIELDS,
+        @Query("expansions") tweetExpansions: String? = Constants.API_EXPANSIONS,
+        @Query("tweet.fields") tweetFields: String? = API_TWEET_FIELDS,
         @Query("poll.fields") tweetPoll: String? = Constants.API_POLL_FIELDS,
         @Query("media.fields") tweetMedia: String? = Constants.API_MEDIA_FIELDS,
         @Query("place.fields") tweetPlace: String? = Constants.API_PLACE_FIELDS,

@@ -6,11 +6,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Includes(
     @field:Json(name = "polls")
-    val poll: Poll? = null,
+    val poll: List<Poll>? = null,
     @field:Json(name = "places")
-    val place: Place? = null,
+    val place: List<Place>? = null,
     @field:Json(name = "media")
-    val media: Media? = null,
+    val media: List<Media>? = null,
     @field:Json(name = "tweets")
     val tweet: List<Tweet>? = null,
     @field:Json(name = "users")

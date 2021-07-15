@@ -10,7 +10,7 @@ data class Place(
     @field:Json(name = "country")
     val country: String,
     @field:Json(name = "country_code")
-    val countryCode: Int,
+    val countryCode: String,
     @field:Json(name = "full_name")
     val fullName: String,
     @field:Json(name = "place_type")

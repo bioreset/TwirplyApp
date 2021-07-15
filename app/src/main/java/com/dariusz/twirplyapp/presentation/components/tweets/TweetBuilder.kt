@@ -15,7 +15,7 @@ import com.dariusz.twirplyapp.domain.model.*
 
 @Composable
 fun DisplayTweet(
-    tweetContent: GenericResponse<Tweet?, Includes?, Errors?, Nothing>,
+    tweetContent: GenericResponse<Tweet?, Includes?, Errors?, Meta?>,
     navController: NavController
 ) = TweetBuilder(
     tweetContentFromResponse = tweetContent,
@@ -36,7 +36,7 @@ fun DisplayTweet(
 
 @Composable
 fun TweetBuilder(
-    tweetContentFromResponse: GenericResponse<Tweet?, Includes?, Errors?, Nothing>,
+    tweetContentFromResponse: GenericResponse<Tweet?, Includes?, Errors?, Meta?>,
     authorProfilePicture: @Composable (UserMinimum) -> Unit,
     authorandTweetInformation: @Composable (UserMinimum, Tweet, Includes) -> Unit,
     tweetIconContent: @Composable (Tweet, NavController) -> Unit,
@@ -72,17 +72,31 @@ fun TweetBuilder(
                         tweetData = tweetPostContent,
                         tweetIncludes = tweetIncludes,
                         tweetDisplayText = {
-                            HashtagsAndMentionsInTweet(it.content, it.entities[0], navController)
+                            it.entities?.let { it1 ->
+                                HashtagsAndMentionsInTweet(
+                                    it.content,
+                                    it1,
+                                    navController
+                                )
+                            }
                             Text(text = it.content, style = MaterialTheme.typography.body1)
                         },
                         tweetDisplayImage = {
                             TweetImage(it)
                         },
                         tweetDisplayMedia = {
-                            tweetIncludes?.media?.let { mediaObject -> TweetMedia(mediaObject) }
+                            tweetIncludes?.media?.get(0).let { mediaObject ->
+                                if (mediaObject != null) {
+                                    TweetMedia(mediaObject)
+                                }
+                            }
                         },
                         tweetDisplayPoll = {
-                            tweetIncludes?.poll?.let { pollObject -> TweetPoll(pollObject) }
+                            tweetIncludes?.poll?.get(0).let { pollObject ->
+                                if (pollObject != null) {
+                                    TweetPoll(pollObject)
+                                }
+                            }
                         },
                         tweetDisplayMentionedTweet = {
                             TweetMentioned(it)
@@ -98,3 +112,4 @@ fun TweetBuilder(
         }
     }
 }
+

@@ -26,13 +26,13 @@ data class UrlObject(
     @field:Json(name = "display_url")
     val displayUrl: String,
     @field:Json(name = "images")
-    val images: List<ImageObject>,
+    val images: List<ImageObject>?,
     @field:Json(name = "status")
-    val status: Int,
+    val status: Int?,
     @field:Json(name = "title")
-    val title: String,
+    val title: String?,
     @field:Json(name = "description")
-    val description: String
+    val description: String?
 )
 
 @JsonClass(generateAdapter = true)

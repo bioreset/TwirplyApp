@@ -12,9 +12,9 @@ data class Media(
     @field:Json(name = "width")
     val width: Int,
     @field:Json(name = "preview_image_url")
-    val previewImageUrl: String,
+    val previewImageUrl: String?,
     @field:Json(name = "type")
-    val type: String,
+    val type: String?,
     @field:Json(name = "public_metrics")
     val publicMetrics: PublicMetrics?
 )

@@ -1,6 +1,5 @@
 package com.dariusz.twirplyapp.utils
 
-
 import android.annotation.SuppressLint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

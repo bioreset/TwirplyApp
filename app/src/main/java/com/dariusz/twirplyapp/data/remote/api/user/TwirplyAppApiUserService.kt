@@ -5,39 +5,56 @@ import com.dariusz.twirplyapp.domain.model.*
 
 interface TwirplyAppApiUserService {
 
-    suspend fun getAllUserDataBasedOnId(id: Int): GenericResponse<User?, Includes?, Errors?, Nothing>
+    suspend fun getAllUserDataBasedOnId(
+        id: String,
+        token: String
+    ): GenericResponse<User?, Includes?, Errors?, Meta?>
 
-    suspend fun getCompactUserDataBasedOnId(id: Int): GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>
+    suspend fun getCompactUserDataBasedOnId(
+        id: String,
+        token: String
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
 
-    suspend fun getAllUserDataBasedOnUsername(name: String): GenericResponse<User?, Includes?, Errors?, Nothing>
+    suspend fun getAllUserDataBasedOnUsername(
+        name: String,
+        token: String
+    ): GenericResponse<User?, Includes?, Errors?, Meta?>
 
-    suspend fun getCompactUserDataBasedOnUsername(name: String): GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>
+    suspend fun getCompactUserDataBasedOnUsername(
+        name: String,
+        token: String
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
 
-    suspend fun fetchUserFollowersBasedOnId(userID: Int): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>
+    suspend fun fetchUserFollowersBasedOnId(
+        userID: String,
+        token: String
+    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
-    suspend fun fetchUserFollowingBasedOnId(userID: Int): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>
+    suspend fun fetchUserFollowingBasedOnId(
+        userID: String,
+        token: String
+    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
 }
 
 class TwirplyAppApiUserServiceImpl : TwirplyAppApiUserService {
 
-    private val retrofit = provideRetrofitUser()
+    override suspend fun getAllUserDataBasedOnId(id: String, token: String) =
+        provideRetrofitUser(token).fetchAllUserDataBasedOnId(id)
 
-    override suspend fun getAllUserDataBasedOnId(id: Int) = retrofit.fetchAllUserDataBasedOnId(id)
+    override suspend fun getCompactUserDataBasedOnId(id: String, token: String) =
+        provideRetrofitUser(token).fetchCompactUserDataBasedOnId(id)
 
-    override suspend fun getCompactUserDataBasedOnId(id: Int) =
-        retrofit.fetchCompactUserDataBasedOnId(id)
+    override suspend fun getAllUserDataBasedOnUsername(name: String, token: String) =
+        provideRetrofitUser(token).fetchAllUserDataBasedOnUsername(name)
 
-    override suspend fun getAllUserDataBasedOnUsername(name: String) =
-        retrofit.fetchAllUserDataBasedOnUsername(name)
+    override suspend fun getCompactUserDataBasedOnUsername(name: String, token: String) =
+        provideRetrofitUser(token).fetchCompactUserDataBasedOnUsername(name)
 
-    override suspend fun getCompactUserDataBasedOnUsername(name: String) =
-        retrofit.fetchCompactUserDataBasedOnUsername(name)
+    override suspend fun fetchUserFollowersBasedOnId(userID: String, token: String) =
+        provideRetrofitUser(token).fetchUserFollowersBasedOnId(userID)
 
-    override suspend fun fetchUserFollowersBasedOnId(userID: Int) =
-        retrofit.fetchUserFollowersBasedOnId(userID)
-
-    override suspend fun fetchUserFollowingBasedOnId(userID: Int) =
-        retrofit.fetchUserFollowingBasedOnId(userID)
+    override suspend fun fetchUserFollowingBasedOnId(userID: String, token: String) =
+        provideRetrofitUser(token).fetchUserFollowingBasedOnId(userID)
 
 }

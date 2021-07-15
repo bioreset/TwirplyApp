@@ -12,12 +12,13 @@ import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 
 @Composable
 fun FollowingScreen(
-    profileID: Long,
+    profileID: String,
     profileScreenViewModel: ProfileScreenViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    token: String
 ) {
 
-    val profileIDToDisplayFollowing = remember { mutableStateOf(profileID) }
+    val profileIDToDisplayFollowing = remember { mutableStateOf("2244994945") }
 
     val followingToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFollowing
@@ -32,13 +33,13 @@ fun FollowingScreen(
     }
 
     LaunchedEffect(Unit) {
-        profileScreenViewModel.getUserFollowing(profileIDToDisplayFollowing.value.toInt())
+        profileScreenViewModel.getUserFollowing(profileIDToDisplayFollowing.value, token)
     }
 }
 
 @Composable
 fun ManageFollowingScreen(
-    input: ResponseState<GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>>,
+    input: ResponseState<GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>>,
     action: (String) -> Unit
 ) {
     when (input) {

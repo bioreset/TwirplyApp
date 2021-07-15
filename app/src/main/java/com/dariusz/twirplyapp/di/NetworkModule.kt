@@ -1,5 +1,8 @@
 package com.dariusz.twirplyapp.di
 
+import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuth
+import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthService
+import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthServiceImpl
 import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearch
 import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchService
 import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchServiceImpl
@@ -21,6 +24,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,10 +32,11 @@ object NetworkModule {
 
     @Provides
     fun provideRetrofitService(
-        tokenLess: Boolean = false,
+        basic: Boolean = false,
+        bearer: Boolean = false,
+        authToken: String = "",
         useNetworkInterceptor: Boolean = true
     ): Retrofit {
-        val token = "//TODO"
         val logging: Interceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
             level = HttpLoggingInterceptor.Level.BODY
@@ -40,39 +45,71 @@ object NetworkModule {
         val moshi =
             Moshi.Builder().add(KotlinJsonAdapterFactory())
                 .build()
-        val client = if (!tokenLess) {
-            OkHttpClient.Builder().apply {
-                addInterceptor(
-                    Interceptor { chain ->
-                        val builder = chain.request().newBuilder()
-                        builder.header("Authorization", "Bearer $token")
-                        return@Interceptor chain.proceed(builder.build())
-                    }
-                )
-            }.addNetworkInterceptor(logging).build()
-        } else if (useNetworkInterceptor) {
-            OkHttpClient.Builder().addNetworkInterceptor(logging).build()
-        } else {
-            null
+        val client = when {
+            bearer -> {
+                OkHttpClient.Builder().apply {
+                    addInterceptor(
+                        Interceptor { chain ->
+                            val builder = chain.request().newBuilder()
+                            builder.header("Authorization", "Bearer $authToken")
+                            return@Interceptor chain.proceed(builder.build())
+                        }
+                    )
+                }.addNetworkInterceptor(logging).build()
+            }
+            basic -> {
+                OkHttpClient.Builder().apply {
+                    addInterceptor(
+                        Interceptor { chain ->
+                            val builder = chain.request().newBuilder()
+                            builder.header("Authorization", "Basic $authToken")
+                            return@Interceptor chain.proceed(builder.build())
+                        }
+                    )
+                }.addNetworkInterceptor(logging).build()
+            }
+            useNetworkInterceptor -> {
+                OkHttpClient.Builder().addNetworkInterceptor(logging).build()
+            }
+            else -> {
+                OkHttpClient.Builder().build()
+            }
         }
         return Retrofit.Builder()
             .baseUrl(API_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(client!!)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .client(client)
             .build()
     }
 
     @Provides
-    fun provideRetrofitSearch(): TwirplyAppApiSearch =
-        provideRetrofitService().create(TwirplyAppApiSearch::class.java)
+    fun provideRetrofitSearch(token: String): TwirplyAppApiSearch =
+        provideRetrofitService(
+            bearer = true,
+            authToken = token
+        ).create(TwirplyAppApiSearch::class.java)
 
     @Provides
-    fun provideRetrofitTweet(): TwirplyAppApiTweet =
-        provideRetrofitService().create(TwirplyAppApiTweet::class.java)
+    fun provideRetrofitTweet(token: String): TwirplyAppApiTweet =
+        provideRetrofitService(
+            bearer = true,
+            authToken = token
+        ).create(TwirplyAppApiTweet::class.java)
 
     @Provides
-    fun provideRetrofitUser(): TwirplyAppApiUser =
-        provideRetrofitService().create(TwirplyAppApiUser::class.java)
+    fun provideRetrofitUser(token: String): TwirplyAppApiUser =
+        provideRetrofitService(
+            bearer = true,
+            authToken = token
+        ).create(TwirplyAppApiUser::class.java)
+
+    @Provides
+    fun provideRetrofitAuth(token: String): TwirplyAppApiAuth =
+        provideRetrofitService(
+            basic = true,
+            authToken = token
+        ).create(TwirplyAppApiAuth::class.java)
 
 
     @Provides
@@ -80,10 +117,15 @@ object NetworkModule {
         TwirplyAppApiTweetServiceImpl()
 
     @Provides
-    fun provideTwirplyAppApiUserService(): TwirplyAppApiUserService = TwirplyAppApiUserServiceImpl()
+    fun provideTwirplyAppApiUserService(): TwirplyAppApiUserService =
+        TwirplyAppApiUserServiceImpl()
 
     @Provides
     fun provideTwirplyAppApiSearchService(): TwirplyAppApiSearchService =
         TwirplyAppApiSearchServiceImpl()
+
+    @Provides
+    fun provideTwirplyAppApiAuthService(): TwirplyAppApiAuthService =
+        TwirplyAppApiAuthServiceImpl()
 
 }

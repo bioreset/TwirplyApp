@@ -21,19 +21,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.LocalImageLoader
+import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.utils.DateUtils.formatDate
-import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun AuthorPicture(userInfo: UserMinimum) {
     Image(
-        painter = rememberCoilPainter(
-            request = userInfo.profileImageUrl,
-            requestBuilder = {
+        painter = rememberImagePainter(
+            data = userInfo.profileImageUrl,
+            imageLoader = LocalImageLoader.current,
+            builder = {
                 transformations(CircleCropTransformation())
-            },
+            }
         ),
         contentDescription = userInfo.username + "'s profile picture",
     )
@@ -61,7 +63,7 @@ fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?, includesData: 
 
             Text(
                 text = userInfo.username + " . " + formatDate(tweetInfo.createdAt) +
-                        " . " + tweetInfo.sourceApp + " . " + (includesData?.place?.fullName
+                        " . " + tweetInfo.sourceApp + " . " + (includesData?.place?.get(0)?.fullName
                     ?: ""),
                 modifier = Modifier.padding(start = 8.dp),
                 style = typography.body1,
@@ -152,11 +154,12 @@ fun TweetIconSection(
 
 @Composable
 fun TweetImage(tweet: Tweet) {
-    val displayUrl = tweet.entities[0].urls?.get(0)?.displayUrl
+    val displayUrl = tweet.entities?.urls?.get(0)?.displayUrl
     if (displayUrl != null) {
         Image(
-            painter = rememberCoilPainter(
-                request = displayUrl
+            painter = rememberImagePainter(
+                data = displayUrl,
+                imageLoader = LocalImageLoader.current
             ),
             contentDescription = null,
             modifier = Modifier
@@ -207,8 +210,9 @@ fun TweetMedia(media: Media) {
             .padding(12.dp)
     ) {
         Image(
-            painter = rememberCoilPainter(
-                request = media.previewImageUrl
+            painter = rememberImagePainter(
+                data = media.previewImageUrl,
+                imageLoader = LocalImageLoader.current
             ),
             contentDescription = null,
             modifier = Modifier
@@ -240,13 +244,13 @@ fun TweetMainContent(
     tweetDisplayPoll: @Composable (Tweet) -> Unit,
     tweetDisplayMentionedTweet: @Composable (Tweet) -> Unit
 ) {
-    val tweetEntitiesElement = tweetData.entities[0]
-    if (tweetEntitiesElement.urls?.size == 0 &&
+    val tweetEntitiesElement = tweetData.entities
+    if (tweetEntitiesElement?.urls?.size == 0 &&
         tweetEntitiesElement.description.toString().isEmpty() &&
         tweetIncludes == null
     ) {
         tweetDisplayText.invoke(tweetData)
-    } else if (tweetEntitiesElement.urls?.size == 1) {
+    } else if (tweetEntitiesElement?.urls?.size == 1) {
         if (tweetIncludes != null) {
             when {
                 tweetIncludes.media.toString().isNotEmpty() -> {
@@ -262,7 +266,7 @@ fun TweetMainContent(
             tweetDisplayText.invoke(tweetData)
             tweetDisplayImage.invoke(tweetData)
         }
-    } else if (tweetEntitiesElement.mentions?.isNotEmpty() == true) {
+    } else if (tweetEntitiesElement?.mentions?.isNotEmpty() == true) {
         tweetDisplayText.invoke(tweetData)
         if (tweetIncludes != null) {
             tweetIncludes.tweet?.get(0)?.let { tweetDisplayMentionedTweet.invoke(it) }

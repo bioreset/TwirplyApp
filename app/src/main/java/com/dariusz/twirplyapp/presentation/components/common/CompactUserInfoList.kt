@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.transform.CircleCropTransformation
+import coil.compose.LocalImageLoader
+import coil.compose.rememberImagePainter
 import com.dariusz.twirplyapp.domain.model.UserMinimum
-import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun CompactUserInfoList(
@@ -57,11 +57,9 @@ fun CompactUserInfo(
 @Composable
 fun AuthorPicture(userInfo: UserMinimum) {
     Image(
-        painter = rememberCoilPainter(
-            request = userInfo.profileImageUrl,
-            requestBuilder = {
-                transformations(CircleCropTransformation())
-            },
+        painter = rememberImagePainter(
+            data = userInfo.profileImageUrl,
+            imageLoader = LocalImageLoader.current
         ),
         contentDescription = userInfo.username + "'s profile picture",
     )

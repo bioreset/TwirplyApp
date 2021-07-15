@@ -6,9 +6,10 @@ import javax.inject.Inject
 
 interface SearchRepository {
 
-    suspend fun returnRecentSearchResults(query: String): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
-
-    suspend fun returnAllSearchResults(query: String): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
+    suspend fun returnRecentSearchResults(
+        query: String,
+        token: String
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
 }
 
@@ -17,10 +18,7 @@ class SearchRepositoryImpl
     private val apiSearchService: TwirplyAppApiSearchService
 ) : SearchRepository {
 
-    override suspend fun returnRecentSearchResults(query: String) =
-        apiSearchService.getRecentTweetsDataBasedOnSearchInput(query)
-
-    override suspend fun returnAllSearchResults(query: String) =
-        apiSearchService.getAllTweetsDataBasedOnSearchInput(query)
+    override suspend fun returnRecentSearchResults(query: String, token: String) =
+        apiSearchService.getRecentTweetsDataBasedOnSearchInput(query, token)
 
 }

@@ -6,17 +6,20 @@ import javax.inject.Inject
 
 interface TweetRepository {
 
-    suspend fun returnAllTweetInfo(tweetID: Int): GenericResponse<Tweet?, Includes?, Errors?, Nothing>
+    suspend fun returnAllTweetInfo(
+        tweetID: String,
+        token: String
+    ): GenericResponse<Tweet?, Includes?, Errors?, Meta?>
 
     suspend fun returnTweetsOfUser(
-        userID: Int,
-        paginationToken: String = ""
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>
+        userID: String,
+        token: String
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
     suspend fun returnMentionsOfUser(
-        userID: Int,
-        paginationToken: String = ""
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>
+        userID: String,
+        token: String
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
 }
 
@@ -25,20 +28,20 @@ class TweetRepositoryImpl
     private val apiTweetService: TwirplyAppApiTweetService
 ) : TweetRepository {
 
-    override suspend fun returnAllTweetInfo(tweetID: Int) =
-        apiTweetService.getTweetDataBasedOnId(tweetID)
+    override suspend fun returnAllTweetInfo(tweetID: String, token: String) =
+        apiTweetService.getTweetDataBasedOnId(tweetID, token)
 
     override suspend fun returnTweetsOfUser(
-        userID: Int,
-        paginationToken: String
+        userID: String,
+        token: String
     ) =
-        apiTweetService.fetchTweetTimelineOfUserBasedOnID(userID, "", paginationToken)
+        apiTweetService.fetchTweetTimelineOfUserBasedOnID(userID, token)
 
     override suspend fun returnMentionsOfUser(
-        userID: Int,
-        paginationToken: String
+        userID: String,
+        token: String
     ) =
-        apiTweetService.fetchMentionsTimelineOfUserBasedOnID(userID, "", paginationToken)
+        apiTweetService.fetchMentionsTimelineOfUserBasedOnID(userID, token)
 
 
 }

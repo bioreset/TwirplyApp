@@ -1,9 +1,14 @@
 package com.dariusz.twirplyapp.utils
 
+import com.dariusz.twirplyapp.AUTH_CONSUMER_KEY
+import com.dariusz.twirplyapp.AUTH_CONSUMER_SECRET
+
 object Constants {
 
     //API SETUP
-    const val API_URL = "https://api.twitter.com/2/"
+    const val API_URL = "https://api.twitter.com/"
+    const val API_AUTH_CONSUMER_KEY = AUTH_CONSUMER_KEY
+    const val API_AUTH_CONSUMER_SECRET = AUTH_CONSUMER_SECRET
 
     //TWEET SETUP
     const val API_TWEET_FIELDS =

@@ -2,11 +2,12 @@ package com.dariusz.twirplyapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dariusz.twirplyapp.domain.model.*
-import com.dariusz.twirplyapp.domain.repository.tweet.TweetRepository
+import com.dariusz.twirplyapp.data.local.AppPreferences
+import com.dariusz.twirplyapp.domain.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,64 +15,53 @@ import javax.inject.Inject
 class MainViewModel
 @Inject
 constructor(
-    private val tweetRepository: TweetRepository
+    private val authRepository: AuthRepository,
+    private val appPreferences: AppPreferences
 ) : ViewModel() {
 
-    private var _fullTweetContent =
-        MutableStateFlow<ResponseState<GenericResponse<Tweet?, Includes?, Errors?, Nothing>>>(
-            ResponseState.Idle
-        )
-    val fullTweetContent: StateFlow<ResponseState<GenericResponse<Tweet?, Includes?, Errors?, Nothing>>> =
-        _fullTweetContent
+    private var _userLoginStatus = MutableStateFlow(
+        false
+    )
+    val userLoginStatus: StateFlow<Boolean> =
+        _userLoginStatus
 
-    private var _userTweets =
-        MutableStateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>>>(
-            ResponseState.Idle
-        )
-    val userTweets: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>>> =
-        _userTweets
+    private var _userLoginID = MutableStateFlow(
+        0
+    )
+    val userLoginID: StateFlow<Int> =
+        _userLoginID
 
-    private var _userMentions =
-        MutableStateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>>>(
-            ResponseState.Idle
-        )
-    val userMentions: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>>> =
-        _userMentions
+    private val _bearerToken = MutableStateFlow(
+        ""
+    )
+    val bearerToken: StateFlow<String> = _bearerToken
 
+    fun getBearerTokenAndSaveIt() = viewModelScope.launch {
+        val response = authRepository.fetchBearerTokenAndSaveIt()
+        appPreferences.let {
+            it.saveBearerToken(response.accessToken)
+            it.getBearerToken().collect { it2 ->
+                _bearerToken.value = it2
+            }
+        }
 
-    fun getAllTweetData(tweetID: Int) = viewModelScope.launch {
-        _fullTweetContent.value = ResponseState.Loading
-        val allTweetData = tweetRepository.returnAllTweetInfo(tweetID)
-        try {
-            _fullTweetContent.value = ResponseState.Success(allTweetData)
-        } catch (exception: Exception) {
-            _fullTweetContent.value = ResponseState.Error(exception)
+    }
+
+    fun getUserLoginID() = viewModelScope.launch {
+        appPreferences.getIDOfLoggedInUser().collect {
+            _userLoginID.value = it
         }
     }
 
-    fun getUserTweets(userID: Int) = viewModelScope.launch {
-        _userTweets.value = ResponseState.Loading
-        val userTweets = tweetRepository.returnTweetsOfUser(userID)
-        try {
-            _userTweets.value = ResponseState.Success(userTweets)
-        } catch (exception: Exception) {
-            _userTweets.value = ResponseState.Error(exception)
+    fun getUserLoginStatus() = viewModelScope.launch {
+        appPreferences.getLoginStatus().collect {
+            _userLoginStatus.value = it
         }
     }
 
-    fun getUserMentions(userID: Int) = viewModelScope.launch {
-        _userMentions.value = ResponseState.Loading
-        val userMentions = tweetRepository.returnMentionsOfUser(userID)
-        try {
-            _userTweets.value = ResponseState.Success(userMentions)
-        } catch (exception: Exception) {
-            _userTweets.value = ResponseState.Error(exception)
-        }
+    fun logout() = viewModelScope.launch {
+        authRepository.invalidateCurrentBearerToken(_bearerToken.value)
     }
+
 
 }
-
-
-
-
-

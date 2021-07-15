@@ -2,6 +2,7 @@ package com.dariusz.twirplyapp.presentation.screens.search
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.dariusz.twirplyapp.domain.model.*
@@ -12,7 +13,8 @@ import com.dariusz.twirplyapp.presentation.components.search.SearchResultsList
 fun SearchResults(
     query: String,
     searchScreenViewModel: SearchScreenViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    token: String
 ) {
 
     val givenQuery = remember { mutableStateOf(query) }
@@ -20,12 +22,12 @@ fun SearchResults(
         searchScreenViewModel.finalSearchResults
     }.collectAsState()
 
-    Text("Search query: $givenQuery")
+    Text("Search query: ${givenQuery.value}", textAlign = TextAlign.Center)
 
     ManageSearchResults(searchResultsList, navController)
 
     LaunchedEffect(Unit) {
-        searchScreenViewModel.fetchSearchResultsForQuery(givenQuery.value)
+        searchScreenViewModel.fetchSearchResultsForQuery(givenQuery.value, token)
     }
 
 }

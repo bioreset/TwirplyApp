@@ -59,7 +59,7 @@ fun TweetBuilderSeparate(
     authorandTweetInformation: @Composable (UserMinimum, Tweet) -> Unit,
     tweetIconContent: @Composable (Tweet, NavController) -> Unit,
     tweetDivider: @Composable () -> Unit,
-    actionOnClick: (Int) -> Unit,
+    actionOnClick: (Long) -> Unit,
     navController: NavController
 ) {
     Row(
@@ -87,17 +87,30 @@ fun TweetBuilderSeparate(
                     tweetData = tweetContentFromResponse,
                     tweetIncludes = null,
                     tweetDisplayText = {
-                        HashtagsAndMentionsInTweet(it.content, it.entities[0], navController)
+                        it.entities?.let { it1 ->
+                            HashtagsAndMentionsInTweet(
+                                it.content,
+                                it1, navController
+                            )
+                        }
                         Text(text = it.content, style = MaterialTheme.typography.body1)
                     },
                     tweetDisplayImage = {
                         TweetImage(it)
                     },
                     tweetDisplayMedia = {
-                        includesFromResponse?.media?.let { mediaObject -> TweetMedia(mediaObject) }
+                        includesFromResponse?.media?.get(0).let { mediaObject ->
+                            if (mediaObject != null) {
+                                TweetMedia(mediaObject)
+                            }
+                        }
                     },
                     tweetDisplayPoll = {
-                        includesFromResponse?.poll?.let { pollObject -> TweetPoll(pollObject) }
+                        includesFromResponse?.poll?.get(0).let { pollObject ->
+                            if (pollObject != null) {
+                                TweetPoll(pollObject)
+                            }
+                        }
                     },
                     tweetDisplayMentionedTweet = {
                         TweetMentioned(it)

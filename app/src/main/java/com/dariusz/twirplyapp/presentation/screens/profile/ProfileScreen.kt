@@ -5,7 +5,6 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.dariusz.twirplyapp.domain.model.*
-import com.dariusz.twirplyapp.presentation.MainViewModel
 import com.dariusz.twirplyapp.presentation.components.common.LoadingComponent
 import com.dariusz.twirplyapp.presentation.components.profile.ProfileFeed
 import com.dariusz.twirplyapp.presentation.components.profile.UserMentionsTimeline
@@ -13,24 +12,28 @@ import com.dariusz.twirplyapp.presentation.components.profile.UserTweetsTimeline
 
 @Composable
 fun ProfileScreen(
-    profileID: Long,
+    profileID: String,
     profileScreenViewModel: ProfileScreenViewModel = viewModel(),
-    mainViewModel: MainViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    token: String
 ) {
 
-    val profileIDToDisplay = remember { mutableStateOf(profileID) }
+    val profile = remember {
+        mutableStateOf(profileID)
+    }
+
+    val profileIDToDisplay = remember { mutableStateOf("2244994945") }
 
     val profileToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFullData
     }.collectAsState()
 
-    val userTweets by remember(mainViewModel) {
-        mainViewModel.userTweets
+    val userTweets by remember(profileScreenViewModel) {
+        profileScreenViewModel.userTweets
     }.collectAsState()
 
-    val userMentions by remember(mainViewModel) {
-        mainViewModel.userMentions
+    val userMentions by remember(profileScreenViewModel) {
+        profileScreenViewModel.userMentions
     }.collectAsState()
 
     ManageProfileScreen(
@@ -47,13 +50,11 @@ fun ProfileScreen(
     }
 
     LaunchedEffect(Unit) {
-        profileIDToDisplay.value.toInt().let { profileID ->
+        profileIDToDisplay.value.let { profileID ->
             profileScreenViewModel.apply {
-                getUserFullData(profileID)
-            }
-            mainViewModel.apply {
-                getUserTweets(profileID)
-                getUserMentions(profileID)
+                getUserFullData(profileID, token)
+                getUserTweets(profileID, token)
+                getUserMentions(profileID, token)
             }
         }
     }
@@ -62,7 +63,7 @@ fun ProfileScreen(
 
 @Composable
 fun ManageProfileScreen(
-    profile: ResponseState<GenericResponse<User?, Includes?, Errors?, Nothing>>,
+    profile: ResponseState<GenericResponse<User?, Includes?, Errors?, Meta?>>,
     tweets: @Composable () -> Unit,
     mentions: @Composable () -> Unit,
     navController: NavController,
@@ -98,7 +99,7 @@ fun ManageProfileScreen(
 
 @Composable
 fun ManageTweets(
-    input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>>,
+    input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,
     navController: NavController
 ) {
     when (input) {
@@ -120,7 +121,7 @@ fun ManageTweets(
 
 @Composable
 fun ManageMentions(
-    input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>>,
+    input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,
     navController: NavController
 ) {
     when (input) {

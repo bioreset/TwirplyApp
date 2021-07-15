@@ -1,8 +1,11 @@
 package com.dariusz.twirplyapp.di
 
+import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiAuthService
 import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiSearchService
 import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiTweetService
 import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiUserService
+import com.dariusz.twirplyapp.domain.repository.auth.AuthRepository
+import com.dariusz.twirplyapp.domain.repository.auth.AuthRepositoryImpl
 import com.dariusz.twirplyapp.domain.repository.search.SearchRepository
 import com.dariusz.twirplyapp.domain.repository.search.SearchRepositoryImpl
 import com.dariusz.twirplyapp.domain.repository.tweet.TweetRepository
@@ -19,17 +22,26 @@ import dagger.hilt.components.SingletonComponent
 object RepositoryModule {
 
     @Provides
-    fun provideSearchRepository(): SearchRepository = SearchRepositoryImpl(
+    fun provideAuthRepository(
+    ): AuthRepository = AuthRepositoryImpl(
+        provideTwirplyAppApiAuthService()
+    )
+
+    @Provides
+    fun provideSearchRepository(
+    ): SearchRepository = SearchRepositoryImpl(
         provideTwirplyAppApiSearchService()
     )
 
     @Provides
-    fun provideTweetRepository(): TweetRepository = TweetRepositoryImpl(
+    fun provideTweetRepository(
+    ): TweetRepository = TweetRepositoryImpl(
         provideTwirplyAppApiTweetService()
     )
 
     @Provides
-    fun provideUserRepository(): UserRepository = UserRepositoryImpl(
+    fun provideUserRepository(
+    ): UserRepository = UserRepositoryImpl(
         provideTwirplyAppApiUserService()
     )
 

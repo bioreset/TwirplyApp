@@ -6,15 +6,30 @@ import javax.inject.Inject
 
 interface UserRepository {
 
-    suspend fun returnAllUserInfo(userID: Int): GenericResponse<User?, Includes?, Errors?, Nothing>
+    suspend fun returnAllUserInfo(
+        userID: String,
+        token: String
+    ): GenericResponse<User?, Includes?, Errors?, Meta?>
 
-    suspend fun getAllUserDataBasedOnUsername(name: String): GenericResponse<User?, Includes?, Errors?, Nothing>
+    suspend fun getAllUserDataBasedOnUsername(
+        name: String,
+        token: String
+    ): GenericResponse<User?, Includes?, Errors?, Meta?>
 
-    suspend fun getCompactUserDataBasedOnUsername(name: String): GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>
+    suspend fun getCompactUserDataBasedOnUsername(
+        name: String,
+        token: String
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
 
-    suspend fun fetchUserFollowersBasedOnId(userID: Int): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>
+    suspend fun fetchUserFollowersBasedOnId(
+        userID: String,
+        token: String
+    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
-    suspend fun fetchUserFollowingBasedOnId(userID: Int): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>
+    suspend fun fetchUserFollowingBasedOnId(
+        userID: String,
+        token: String
+    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
 }
 
@@ -23,20 +38,20 @@ class UserRepositoryImpl
     private val apiUserService: TwirplyAppApiUserService
 ) : UserRepository {
 
-    override suspend fun returnAllUserInfo(userID: Int) =
-        apiUserService.getAllUserDataBasedOnId(userID)
+    override suspend fun returnAllUserInfo(userID: String, token: String) =
+        apiUserService.getAllUserDataBasedOnId(userID, token)
 
-    override suspend fun getAllUserDataBasedOnUsername(name: String) =
-        apiUserService.getAllUserDataBasedOnUsername(name)
+    override suspend fun getAllUserDataBasedOnUsername(name: String, token: String) =
+        apiUserService.getAllUserDataBasedOnUsername(name, token)
 
-    override suspend fun getCompactUserDataBasedOnUsername(name: String) =
-        apiUserService.getCompactUserDataBasedOnUsername(name)
+    override suspend fun getCompactUserDataBasedOnUsername(name: String, token: String) =
+        apiUserService.getCompactUserDataBasedOnUsername(name, token)
 
-    override suspend fun fetchUserFollowersBasedOnId(userID: Int) =
-        apiUserService.fetchUserFollowersBasedOnId(userID)
+    override suspend fun fetchUserFollowersBasedOnId(userID: String, token: String) =
+        apiUserService.fetchUserFollowersBasedOnId(userID, token)
 
-    override suspend fun fetchUserFollowingBasedOnId(userID: Int) =
-        apiUserService.fetchUserFollowingBasedOnId(userID)
+    override suspend fun fetchUserFollowingBasedOnId(userID: String, token: String) =
+        apiUserService.fetchUserFollowingBasedOnId(userID, token)
 
 }
 

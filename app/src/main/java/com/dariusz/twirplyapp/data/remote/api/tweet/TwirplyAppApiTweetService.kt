@@ -6,42 +6,37 @@ import com.dariusz.twirplyapp.domain.model.*
 interface TwirplyAppApiTweetService {
 
     suspend fun getTweetDataBasedOnId(
-        id: Int
-    ): GenericResponse<Tweet?, Includes?, Errors?, Nothing>
+        id: String,
+        token: String
+    ): GenericResponse<Tweet?, Includes?, Errors?, Meta?>
 
     suspend fun fetchTweetTimelineOfUserBasedOnID(
-        userID: Int,
-        tweetExpansions: String,
-        paginationToken: String
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>
+        userID: String,
+        token: String
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
     suspend fun fetchMentionsTimelineOfUserBasedOnID(
-        userID: Int,
-        tweetExpansions: String,
-        paginationToken: String
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>
+        userID: String,
+        token: String
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
 }
 
 class TwirplyAppApiTweetServiceImpl : TwirplyAppApiTweetService {
 
-    private val retrofit = provideRetrofitTweet()
-
-    override suspend fun getTweetDataBasedOnId(id: Int) =
-        retrofit.fetchTweetDataBasedOnId(id)
+    override suspend fun getTweetDataBasedOnId(id: String, token: String) =
+        provideRetrofitTweet(token).fetchTweetDataBasedOnId(id)
 
     override suspend fun fetchTweetTimelineOfUserBasedOnID(
-        userID: Int,
-        tweetExpansions: String,
-        paginationToken: String
+        userID: String,
+        token: String
     ) =
-        retrofit.fetchTweetTimelineOfUserBasedOnID(userID, tweetExpansions, paginationToken)
+        provideRetrofitTweet(token).fetchTweetTimelineOfUserBasedOnID(userID)
 
     override suspend fun fetchMentionsTimelineOfUserBasedOnID(
-        userID: Int,
-        tweetExpansions: String,
-        paginationToken: String
+        userID: String,
+        token: String
     ) =
-        retrofit.fetchMentionsTimelineOfUserBasedOnID(userID, tweetExpansions, paginationToken)
+        provideRetrofitTweet(token).fetchMentionsTimelineOfUserBasedOnID(userID)
 
 }

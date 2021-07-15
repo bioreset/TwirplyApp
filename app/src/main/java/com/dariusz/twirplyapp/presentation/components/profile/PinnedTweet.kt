@@ -2,16 +2,13 @@ package com.dariusz.twirplyapp.presentation.components.profile
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.dariusz.twirplyapp.domain.model.Errors
-import com.dariusz.twirplyapp.domain.model.GenericResponse
-import com.dariusz.twirplyapp.domain.model.Includes
-import com.dariusz.twirplyapp.domain.model.User
+import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.domain.model.UserMinimum.Companion.minimizeUser
 import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweetSeparate
 
 @Composable
 fun PinnedTweet(
-    user: GenericResponse<User?, Includes?, Errors?, Nothing>,
+    user: GenericResponse<User?, Includes?, Errors?, Meta?>,
     navController: NavController
 ) {
     val authorInfo = user.outputOne

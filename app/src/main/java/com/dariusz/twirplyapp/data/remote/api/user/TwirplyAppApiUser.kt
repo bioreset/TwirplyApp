@@ -10,45 +10,45 @@ import retrofit2.http.Query
 
 interface TwirplyAppApiUser {
 
-    @GET("users/{id}")
+    @GET("2/users/{id}")
     suspend fun fetchAllUserDataBasedOnId(
-        @Path("id") userID: Int,
+        @Path("id") userID: String,
         @Query("user.fields") userFields: String = API_USER_FIELDS_FULL,
         @Query("expansions") userExpansions: String = "pinned_tweet_id",
         @Query("tweet.fields") tweetUserFields: String? = API_TWEET_FIELDS,
-    ): GenericResponse<User?, Includes?, Errors?, Nothing>
+    ): GenericResponse<User?, Includes?, Errors?, Meta?>
 
-    @GET("users/{id}")
+    @GET("2/users/{id}")
     suspend fun fetchCompactUserDataBasedOnId(
-        @Path("id") userID: Int,
+        @Path("id") userID: String,
         @Query("user.fields") userFields: String = API_USER_FIELDS_COMPACT,
-    ): GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
 
-    @GET("users/{username}")
+    @GET("2/users/{username}")
     suspend fun fetchAllUserDataBasedOnUsername(
         @Path("username") userName: String,
         @Query("user.fields") userFields: String = API_USER_FIELDS_FULL,
         @Query("expansions") userExpansions: String = "pinned_tweet_id",
         @Query("tweet.fields") tweetUserFields: String? = API_TWEET_FIELDS,
-    ): GenericResponse<User?, Includes?, Errors?, Nothing>
+    ): GenericResponse<User?, Includes?, Errors?, Meta?>
 
-    @GET("users/{username}")
+    @GET("2/users/{username}")
     suspend fun fetchCompactUserDataBasedOnUsername(
         @Path("username") userName: String,
         @Query("user.fields") userFields: String = API_USER_FIELDS_COMPACT,
-    ): GenericResponse<UserMinimum?, Includes?, Errors?, Nothing>
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
 
-    @GET("users/{id}/followers")
+    @GET("2/users/{id}/followers")
     suspend fun fetchUserFollowersBasedOnId(
-        @Path("id") userID: Int,
+        @Path("id") userID: String,
         @Query("user.fields") userFields: String = API_USER_FIELDS_COMPACT,
-    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>
+    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
-    @GET("users/{id}/following")
+    @GET("2/users/{id}/following")
     suspend fun fetchUserFollowingBasedOnId(
-        @Path("id") userID: Int,
+        @Path("id") userID: String,
         @Query("user.fields") userFields: String = API_USER_FIELDS_COMPACT,
-    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Nothing>
+    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
 
 }

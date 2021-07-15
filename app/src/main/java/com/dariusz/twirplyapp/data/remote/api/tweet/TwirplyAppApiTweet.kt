@@ -13,39 +13,40 @@ import retrofit2.http.Query
 
 interface TwirplyAppApiTweet {
 
-    @GET("tweets/{id}")
+    @GET("2/tweets/{id}")
     suspend fun fetchTweetDataBasedOnId(
-        @Path("id") tweetID: Int,
-        @Query("expansions") tweetExpansions: String = API_EXPANSIONS,
-        @Query("tweet.fields") tweetFields: String = API_TWEET_FIELDS,
+        @Path("id") tweetID: String,
+        @Query("expansions") tweetExpansions: String? = API_EXPANSIONS,
+        @Query("tweet.fields") tweetFields: String? = API_TWEET_FIELDS,
         @Query("poll.fields") tweetPoll: String? = API_POLL_FIELDS,
         @Query("media.fields") tweetMedia: String? = API_MEDIA_FIELDS,
         @Query("place.fields") tweetPlace: String? = API_PLACE_FIELDS,
         @Query("user.fields") tweetUser: String = API_USER_FIELDS_COMPACT
-    ): GenericResponse<Tweet?, Includes?, Errors?, Nothing>
+    ): GenericResponse<Tweet?, Includes?, Errors?, Meta?>
 
-    @GET("users/{id}/tweets")
+    @GET("2/users/{id}/tweets")
     suspend fun fetchTweetTimelineOfUserBasedOnID(
-        @Path("id") userID: Int,
-        @Query("pagination_token") paginationToken: String,
-        @Query("expansions") tweetExpansions: String = API_EXPANSIONS,
-        @Query("tweet.fields") tweetFields: String = API_TWEET_FIELDS,
+        @Path("id") userID: String,
+        //   @Query("pagination_token") paginationToken: String? = "",
+        @Query("expansions") tweetExpansions: String? = API_EXPANSIONS,
+        @Query("tweet.fields") tweetFields: String? = API_TWEET_FIELDS,
         @Query("poll.fields") tweetPoll: String? = API_POLL_FIELDS,
         @Query("media.fields") tweetMedia: String? = API_MEDIA_FIELDS,
         @Query("place.fields") tweetPlace: String? = API_PLACE_FIELDS,
         @Query("user.fields") tweetUser: String = API_USER_FIELDS_COMPACT
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
-    @GET("users/{id}/mentions")
+    @GET("2/users/{id}/mentions")
     suspend fun fetchMentionsTimelineOfUserBasedOnID(
-        @Path("id") userID: Int,
-        @Query("pagination_token") paginationToken: String,
-        @Query("expansions") tweetExpansions: String = API_EXPANSIONS,
-        @Query("tweet.fields") tweetFields: String = API_TWEET_FIELDS,
+        @Path("id") userID: String,
+        //    @Query("pagination_token") paginationToken: String? = "",
+        @Query("expansions") tweetExpansions: String? = API_EXPANSIONS,
+        @Query("tweet.fields") tweetFields: String? = API_TWEET_FIELDS,
         @Query("poll.fields") tweetPoll: String? = API_POLL_FIELDS,
         @Query("media.fields") tweetMedia: String? = API_MEDIA_FIELDS,
         @Query("place.fields") tweetPlace: String? = API_PLACE_FIELDS,
         @Query("user.fields") tweetUser: String = API_USER_FIELDS_COMPACT
-    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
+
 
 }

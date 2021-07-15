@@ -1,15 +1,29 @@
 package com.dariusz.twirplyapp.presentation.screens.feed
 
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.dariusz.twirplyapp.presentation.MainViewModel
+import androidx.navigation.NavController
+import com.dariusz.twirplyapp.presentation.components.navigation.Screens
+import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 
 @Composable
 fun FeedScreen(
-    mainViewModel: MainViewModel = viewModel()
+    profileID: String,
+    navController: NavController
 ) {
 
-    Text("Feed Screen")
+    if (profileID.toInt() == 0) Text("Feed Screen")
+    else Text("wtf?")
 
+
+    Button(onClick = {
+        navigateToWithArgument(
+            navController,
+            Screens.AppScreens.ProfileScreen.route,
+            "2244994945"
+        )
+    }) {
+        Text("Open test profile")
+    }
 }

@@ -24,9 +24,9 @@ constructor(
     val finalSearchResults: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>> =
         _searchResults
 
-    fun fetchSearchResultsForQuery(query: String) = viewModelScope.launch {
+    fun fetchSearchResultsForQuery(query: String, token: String) = viewModelScope.launch {
         _searchResults.value = ResponseState.Loading
-        val results = searchRepository.returnRecentSearchResults(query)
+        val results = searchRepository.returnRecentSearchResults(query, token)
         try {
             _searchResults.value = ResponseState.Success(results)
         } catch (exception: Exception) {

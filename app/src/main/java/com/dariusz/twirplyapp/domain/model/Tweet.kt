@@ -6,13 +6,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Tweet(
     @field:Json(name = "id")
-    val id: Int,
+    val id: Long,
     @field:Json(name = "author_id")
     val authorID: String,
     @field:Json(name = "created_at")
     val createdAt: String,
     @field:Json(name = "entities")
-    val entities: List<Entity>,
+    val entities: Entity?,
     @field:Json(name = "lang")
     val lang: String,
     @field:Json(name = "possibly_sensitive")
@@ -22,7 +22,7 @@ data class Tweet(
     @field:Json(name = "text")
     val content: String,
     @field:Json(name = "attachments")
-    val attachments: List<Attachments>?,
+    val attachments: Attachments?,
     @field:Json(name = "referenced_tweets")
     val referencedTweets: List<ReferencedTweets>?,
     @field:Json(name = "public_metrics")
@@ -40,9 +40,9 @@ data class Attachments(
 @JsonClass(generateAdapter = true)
 data class ReferencedTweets(
     @field:Json(name = "type")
-    val type: String,
+    val type: String?,
     @field:Json(name = "tweet_id")
-    val tweetID: String
+    val tweetID: String?
 )
 
 @JsonClass(generateAdapter = true)

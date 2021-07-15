@@ -5,16 +5,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".TwirplyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".TwirplyApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TwirplyApp">
         <activity
-            android:name=".presentation.MainActivity"
-            android:exported="true"
+            android:name=".presentation.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.TwirplyApp.NoActionBar">
             <intent-filter>
@@ -22,6 +21,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".presentation.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.TwirplyApp.NoActionBar">
         </activity>
     </application>
 

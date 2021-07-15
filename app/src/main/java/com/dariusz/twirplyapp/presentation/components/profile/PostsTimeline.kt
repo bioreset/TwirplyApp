@@ -9,25 +9,24 @@ import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweetSeparat
 
 @Composable
 fun UserTweetsTimeline(
-    input: GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>,
+    input: GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>,
     navController: NavController
 ) {
 
     val listOfTweets = input.outputOne.orEmpty()
-    val listOfUsers = input.outputTwo?.user.orEmpty()
+    val user = input.outputTwo?.user?.get(0)
     val includesOflist = input.outputTwo
 
     LazyColumn {
-        items(listOfTweets.zip(listOfUsers)) { item ->
-            DisplayTweetSeparate(item.first, item.second, includesOflist, navController)
+        items(listOfTweets) { item ->
+            DisplayTweetSeparate(item, user, includesOflist, navController)
         }
     }
-
 }
 
 @Composable
 fun UserMentionsTimeline(
-    input: GenericResponse<List<Tweet>?, Includes?, Errors?, Meta>,
+    input: GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>,
     navController: NavController
 ) {
     val listOfTweets = input.outputOne.orEmpty()

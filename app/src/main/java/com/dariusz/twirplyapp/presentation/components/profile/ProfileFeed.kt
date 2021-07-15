@@ -21,17 +21,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.dariusz.twirplyapp.domain.model.Errors
-import com.dariusz.twirplyapp.domain.model.GenericResponse
-import com.dariusz.twirplyapp.domain.model.Includes
-import com.dariusz.twirplyapp.domain.model.User
+import coil.compose.LocalImageLoader
+import coil.compose.rememberImagePainter
+import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
-import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
 fun ProfileFeed(
-    user: GenericResponse<User?, Includes?, Errors?, Nothing>,
+    user: GenericResponse<User?, Includes?, Errors?, Meta?>,
     tweets: @Composable (String) -> Unit,
     mentions: @Composable (String) -> Unit,
     navController: NavController,
@@ -118,8 +116,9 @@ fun UserInfo(user: User, navController: NavController) {
 @Composable
 private fun Avatar(user: User) {
     Image(
-        painter = rememberCoilPainter(
-            request = user.profileImageUrl
+        painter = rememberImagePainter(
+            data = user.profileImageUrl,
+            imageLoader = LocalImageLoader.current
         ),
         contentDescription = null,
         modifier = Modifier
