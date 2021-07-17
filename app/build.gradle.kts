@@ -17,9 +17,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -60,7 +57,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.4.0-alpha04")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("com.google.accompanist:accompanist-coil:0.14.0")
+    implementation("io.coil-kt:coil-compose:1.3.0")
     implementation("com.google.accompanist:accompanist-pager:0.14.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.14.0")
 

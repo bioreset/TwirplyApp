@@ -1,12 +1,12 @@
 package com.dariusz.twirplyapp.presentation.components.tweets
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -21,10 +21,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.LocalImageLoader
 import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
 import com.dariusz.twirplyapp.domain.model.*
+import com.dariusz.twirplyapp.presentation.components.theme.ThemeShapes
+import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 import com.dariusz.twirplyapp.utils.DateUtils.formatDate
 
 @Composable
@@ -32,23 +34,23 @@ fun AuthorPicture(userInfo: UserMinimum) {
     Image(
         painter = rememberImagePainter(
             data = userInfo.profileImageUrl,
-            imageLoader = LocalImageLoader.current,
-            builder = {
-                transformations(CircleCropTransformation())
-            }
+            imageLoader = LocalImageLoader.current
         ),
-        contentDescription = userInfo.username + "'s profile picture",
+        contentDescription = null,
+        modifier = Modifier
+            .size(40.dp)
+            .clip(shape = RoundedCornerShape(40.dp))
     )
 }
 
 @Composable
-fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?, includesData: Includes?) {
-    if (userInfo != null && tweetInfo != null)
+fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?) {
+    if (userInfo != null && tweetInfo != null) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = userInfo.name,
-                style = typography.h6,
-                modifier = Modifier.padding(end = 4.dp)
+                style = ThemeTypography.h2,
+                modifier = Modifier.padding(end = 3.dp)
             )
 
             if (userInfo.isVerified) Icon(
@@ -60,16 +62,18 @@ fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?, includesData: 
                     .align(Alignment.CenterVertically)
                     .padding(top = 2.dp)
             )
-
+        }
+        Spacer(modifier = Modifier.height(1.dp))
+        Row {
             Text(
-                text = userInfo.username + " . " + formatDate(tweetInfo.createdAt) +
-                        " . " + tweetInfo.sourceApp + " . " + (includesData?.place?.get(0)?.fullName
-                    ?: ""),
-                modifier = Modifier.padding(start = 8.dp),
-                style = typography.body1,
-                textAlign = TextAlign.Center
+                text = " @" + userInfo.username + " ᛫ " + formatDate(tweetInfo.createdAt) +
+                        " ᛫ " + tweetInfo.sourceApp,
+                style = ThemeTypography.caption,
+                textAlign = TextAlign.Left
             )
         }
+        Spacer(modifier = Modifier.height(6.dp))
+    }
 }
 
 @Composable
@@ -82,9 +86,8 @@ fun TweetIconSection(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(onClick = { actionReply.invoke(tweet) }) {
             Row {
@@ -96,9 +99,9 @@ fun TweetIconSection(
                 )
                 Text(
                     text = tweet.publicMetrics.replyCount.toString(),
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
                     color = Color.LightGray,
-                    style = typography.caption
+                    style = ThemeTypography.body1
                 )
             }
         }
@@ -112,9 +115,9 @@ fun TweetIconSection(
                 )
                 Text(
                     text = tweet.publicMetrics.retweetCount.toString(),
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
                     color = Color.LightGray,
-                    style = typography.caption
+                    style = ThemeTypography.body1
                 )
             }
         }
@@ -128,45 +131,52 @@ fun TweetIconSection(
                 )
                 Text(
                     text = tweet.publicMetrics.likesCount.toString(),
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
                     color = Color.LightGray,
-                    style = typography.caption
+                    style = ThemeTypography.body1
                 )
             }
         }
         IconButton(onClick = { actionShare.invoke(tweet) }) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = Color.LightGray
-            )
-            Text(
-                text = tweet.publicMetrics.quoteCount.toString(),
-                modifier = Modifier.padding(start = 8.dp),
-                color = Color.LightGray,
-                style = typography.caption
-            )
+            Row {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.LightGray
+                )
+                Text(
+                    text = tweet.publicMetrics.quoteCount.toString(),
+                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
+                    color = Color.LightGray,
+                    style = ThemeTypography.body1
+                )
+            }
         }
     }
-
 }
 
 @Composable
-fun TweetImage(tweet: Tweet) {
-    val displayUrl = tweet.entities?.urls?.get(0)?.displayUrl
-    if (displayUrl != null) {
+fun TweetImage(media: Media) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
         Image(
             painter = rememberImagePainter(
-                data = displayUrl,
-                imageLoader = LocalImageLoader.current
+                data = media.url,
+                imageLoader = LocalImageLoader.current,
+                onExecute = { _, _ -> true },
+                builder = {
+                    crossfade(true)
+                    allowHardware(false)
+                }
             ),
             contentDescription = null,
             modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
-                .height(150.dp)
-                .clip(RoundedCornerShape(4.dp)),
+                .heightIn(min = 120.dp)
+                .padding(all = 3.dp)
+                .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
     }
@@ -177,7 +187,6 @@ fun TweetPoll(poll: Poll) {
     val counter = remember { mutableStateOf(0) }
     Column(
         modifier = Modifier
-            .padding(6.dp)
             .fillMaxWidth()
     ) {
         for (option in poll.options) {
@@ -187,17 +196,18 @@ fun TweetPoll(poll: Poll) {
                     .fillMaxWidth()
                     .padding(6.dp)
             ) {
-                Text(text = option.label + option.votesAmount + " / " + counter.value)
+                Text(text = option.label, style = ThemeTypography.button)
             }
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(all = 3.dp)
         ) {
-            Text("Votes amount: ${counter.value}")
-            Text("Time to end: ${formatDate(poll.endTime)}")
+            Text(
+                "Votes amount: ${counter.value} ᛫ Ending time: ${formatDate(poll.endTime)}",
+                style = ThemeTypography.caption, textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -207,12 +217,62 @@ fun TweetMedia(media: Media) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
     ) {
         Image(
             painter = rememberImagePainter(
                 data = media.previewImageUrl,
-                imageLoader = LocalImageLoader.current
+                imageLoader = LocalImageLoader.current,
+                onExecute = { _, _ -> true },
+                builder = {
+                    crossfade(true)
+                    allowHardware(false)
+                }
+            ),
+            contentDescription = null,
+            modifier = Modifier
+                .heightIn(min = 120.dp)
+                .padding(all = 3.dp)
+                .fillMaxWidth(),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "Media: ${media.height}x${media.width} ᛫ ${media.type} ᛫ ${media.durationInMs} ᛫ ${media.previewImageUrl}",
+            style = ThemeTypography.caption,
+            modifier = Modifier.padding(all = 3.dp),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@ExperimentalCoilApi
+@Composable
+fun TweetMentioned(tweetData: Tweet, author: UserMinimum) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(width = 0.25.dp, color = Color.Gray, shape = ThemeShapes.small)
+    ) {
+        DisplayTweetSeparate(tweetData, author, null, null)
+    }
+}
+
+@ExperimentalCoilApi
+@Composable
+fun TweetUrlObject(urlObject: UrlObject) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Image(
+            painter = rememberImagePainter(
+                data = urlObject.images?.get(0)?.url,
+                imageLoader = LocalImageLoader.current,
+                onExecute = { _, _ -> true },
+                builder = {
+                    crossfade(true)
+                    allowHardware(false)
+                }
             ),
             contentDescription = null,
             modifier = Modifier
@@ -220,60 +280,30 @@ fun TweetMedia(media: Media) {
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(3.dp))
+        urlObject.title?.let {
+            Text(
+                text = it,
+                style = ThemeTypography.body1,
+                modifier = Modifier.padding(all = 3.dp)
+
+            )
+        }
+        urlObject.description?.let {
+            Text(
+                text = it,
+                style = ThemeTypography.button,
+                modifier = Modifier.padding(all = 3.dp)
+            )
+        }
         Text(
-            text = "${media.height}x${media.width} - ${media.type} - ${media.durationInMs}",
-            style = typography.subtitle2
+            text = urlObject.displayUrl,
+            style = ThemeTypography.caption,
+            modifier = Modifier.padding(all = 3.dp),
+            textAlign = TextAlign.Center
         )
     }
 }
-
-@Composable
-fun TweetMentioned(tweetData: Tweet) {
-//TODO: CREATE MENTIONED TWEET UI
-}
-
-
-@Composable
-fun TweetMainContent(
-    tweetData: Tweet,
-    tweetIncludes: Includes?,
-    tweetDisplayText: @Composable (Tweet) -> Unit,
-    tweetDisplayImage: @Composable (Tweet) -> Unit,
-    tweetDisplayMedia: @Composable (Tweet) -> Unit,
-    tweetDisplayPoll: @Composable (Tweet) -> Unit,
-    tweetDisplayMentionedTweet: @Composable (Tweet) -> Unit
-) {
-    val tweetEntitiesElement = tweetData.entities
-    if (tweetEntitiesElement?.urls?.size == 0 &&
-        tweetEntitiesElement.description.toString().isEmpty() &&
-        tweetIncludes == null
-    ) {
-        tweetDisplayText.invoke(tweetData)
-    } else if (tweetEntitiesElement?.urls?.size == 1) {
-        if (tweetIncludes != null) {
-            when {
-                tweetIncludes.media.toString().isNotEmpty() -> {
-                    tweetDisplayText.invoke(tweetData)
-                    tweetDisplayMedia.invoke(tweetData)
-                }
-                tweetIncludes.poll.toString().isNotEmpty() -> {
-                    tweetDisplayText.invoke(tweetData)
-                    tweetDisplayPoll.invoke(tweetData)
-                }
-            }
-        } else {
-            tweetDisplayText.invoke(tweetData)
-            tweetDisplayImage.invoke(tweetData)
-        }
-    } else if (tweetEntitiesElement?.mentions?.isNotEmpty() == true) {
-        tweetDisplayText.invoke(tweetData)
-        if (tweetIncludes != null) {
-            tweetIncludes.tweet?.get(0)?.let { tweetDisplayMentionedTweet.invoke(it) }
-        }
-    }
-}
-
 
 @Composable
 fun TweetActions(tweet: Tweet, navController: NavController) =

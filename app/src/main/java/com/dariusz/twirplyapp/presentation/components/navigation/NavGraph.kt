@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.di.RepositoryModule.provideSearchRepository
 import com.dariusz.twirplyapp.di.RepositoryModule.provideTweetRepository
 import com.dariusz.twirplyapp.di.RepositoryModule.provideUserRepository
@@ -23,7 +24,10 @@ import com.dariusz.twirplyapp.presentation.screens.search.SearchScreenViewModelF
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreen
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreenViewModel
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreenViewModelFactory
+import com.google.accompanist.pager.ExperimentalPagerApi
 
+@ExperimentalCoilApi
+@ExperimentalPagerApi
 @ExperimentalComposeUiApi
 @Composable
 fun MainNavigationHost(
@@ -50,6 +54,7 @@ fun MainNavigationHost(
     val tokenRemembered by remember(mainViewModel) {
         mainViewModel.bearerToken
     }.collectAsState()
+
     NavHost(
         navController = navController as NavHostController,
         startDestination = Screens.AppScreens.FeedScreen.route

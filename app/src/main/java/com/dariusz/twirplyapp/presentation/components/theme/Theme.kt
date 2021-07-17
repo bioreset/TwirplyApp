@@ -16,38 +16,47 @@ fun TwirplyAppTheme(
     content: @Composable () -> Unit
 ) {
     val darkTheme = isSystemInDarkTheme()
-    val themePrimaryColor = theme.primaryColor.getColors(darkTheme)
-    val themeSecondaryColor = theme.secondaryColor.getColors(darkTheme)
-    val primaryColor = animateColorAsState(themePrimaryColor)
-    val primaryVariantColor = animateColorAsState(themePrimaryColor.variantColor())
-    val onPrimaryColor = animateColorAsState(themePrimaryColor.onColor())
-    val secondaryColor = animateColorAsState(themeSecondaryColor)
-    val secondaryVariantColor = animateColorAsState(themeSecondaryColor.variantColor())
-    val onSecondaryColor = animateColorAsState(themeSecondaryColor.onColor())
-    val mainShapes = theme.shapesFamily.getShapes()
-    val mainTypography = theme.mainTypography.getTypography()
-    val colors = if (!darkTheme) {
-        lightColors(
-            primary = primaryColor.value,
-            primaryVariant = primaryVariantColor.value,
-            onPrimary = onPrimaryColor.value,
-            secondary = secondaryColor.value,
-            secondaryVariant = secondaryVariantColor.value,
-            onSecondary = onSecondaryColor.value
-        )
-    } else {
-        darkColors(
-            primary = primaryColor.value,
-            primaryVariant = primaryVariantColor.value,
-            onPrimary = onPrimaryColor.value,
-            secondary = secondaryColor.value,
-            onSecondary = onSecondaryColor.value
-        )
-    }
-    MaterialTheme(
-        colors = colors,
-        typography = mainTypography,
-        shapes = mainShapes,
-        content = content
+    val appThemeSetter = theme.copy(
+        primaryColor = getColors(darkTheme, "blue"),
+        secondaryColor = getColors(darkTheme, "purple"),
+        shapesFamily = ThemeShapes,
+        mainTypography = ThemeTypography
     )
+    val themePrimaryColor = appThemeSetter.primaryColor
+    val themeSecondaryColor = appThemeSetter.secondaryColor
+    val mainShapes = appThemeSetter.shapesFamily
+    val mainTypography = appThemeSetter.mainTypography
+    if (themePrimaryColor != null && themeSecondaryColor != null && mainTypography != null && mainShapes != null) {
+        val primaryColor = animateColorAsState(themePrimaryColor)
+        val primaryVariantColor = animateColorAsState(themePrimaryColor.variantColor())
+        val onPrimaryColor = animateColorAsState(themePrimaryColor.onColor())
+        val secondaryColor = animateColorAsState(themeSecondaryColor)
+        val secondaryVariantColor = animateColorAsState(themeSecondaryColor.variantColor())
+        val onSecondaryColor = animateColorAsState(themeSecondaryColor.onColor())
+        val colors = if (!darkTheme) {
+            lightColors(
+                primary = primaryColor.value,
+                primaryVariant = primaryVariantColor.value,
+                onPrimary = onPrimaryColor.value,
+                secondary = secondaryColor.value,
+                secondaryVariant = secondaryVariantColor.value,
+                onSecondary = onSecondaryColor.value
+            )
+        } else {
+            darkColors(
+                primary = primaryColor.value,
+                primaryVariant = primaryVariantColor.value,
+                onPrimary = onPrimaryColor.value,
+                secondary = secondaryColor.value,
+                onSecondary = onSecondaryColor.value
+            )
+        }
+        MaterialTheme(
+            colors = colors,
+            typography = mainTypography,
+            shapes = mainShapes,
+            content = content
+        )
+
+    }
 }

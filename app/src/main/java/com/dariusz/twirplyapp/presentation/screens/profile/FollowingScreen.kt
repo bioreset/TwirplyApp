@@ -18,8 +18,6 @@ fun FollowingScreen(
     token: String
 ) {
 
-    val profileIDToDisplayFollowing = remember { mutableStateOf("2244994945") }
-
     val followingToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFollowing
     }.collectAsState()
@@ -33,7 +31,7 @@ fun FollowingScreen(
     }
 
     LaunchedEffect(Unit) {
-        profileScreenViewModel.getUserFollowing(profileIDToDisplayFollowing.value, token)
+        profileScreenViewModel.getUserFollowing(profileID, token)
     }
 }
 

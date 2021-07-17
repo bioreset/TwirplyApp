@@ -98,9 +98,9 @@ constructor(
         _userMentions.value = ResponseState.Loading
         val userMentions = tweetRepository.returnMentionsOfUser(userID, token = token)
         try {
-            _userTweets.value = ResponseState.Success(userMentions)
+            _userMentions.value = ResponseState.Success(userMentions)
         } catch (exception: Exception) {
-            _userTweets.value = ResponseState.Error(exception)
+            _userMentions.value = ResponseState.Error(exception)
         }
     }
 

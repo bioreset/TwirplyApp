@@ -5,6 +5,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class Media(
+    @field:Json(name = "media_key")
+    val mediaKey: String?,
     @field:Json(name = "duration_ms")
     val durationInMs: Int?,
     @field:Json(name = "height")
@@ -13,6 +15,8 @@ data class Media(
     val width: Int,
     @field:Json(name = "preview_image_url")
     val previewImageUrl: String?,
+    @field:Json(name = "url")
+    val url: String?,
     @field:Json(name = "type")
     val type: String?,
     @field:Json(name = "public_metrics")

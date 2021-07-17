@@ -4,12 +4,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.common.LoadingComponent
 import com.dariusz.twirplyapp.presentation.components.profile.ProfileFeed
 import com.dariusz.twirplyapp.presentation.components.profile.UserMentionsTimeline
 import com.dariusz.twirplyapp.presentation.components.profile.UserTweetsTimeline
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 
+@ExperimentalCoilApi
+@ExperimentalPagerApi
 @Composable
 fun ProfileScreen(
     profileID: String,
@@ -18,11 +24,7 @@ fun ProfileScreen(
     token: String
 ) {
 
-    val profile = remember {
-        mutableStateOf(profileID)
-    }
-
-    val profileIDToDisplay = remember { mutableStateOf("2244994945") }
+    val pagerState = rememberPagerState(pageCount = 2)
 
     val profileToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFullData
@@ -38,35 +40,35 @@ fun ProfileScreen(
 
     ManageProfileScreen(
         profile = profileToDisplay,
+        navController = navController,
+        pagerState = pagerState,
         tweets = {
             ManageTweets(input = userTweets, navController = navController)
         },
         mentions = {
             ManageMentions(input = userMentions, navController = navController)
-        },
-        navController = navController
+        }
     ) {
         /* TODO: FOLLOW ACTION */
     }
 
     LaunchedEffect(Unit) {
-        profileIDToDisplay.value.let { profileID ->
-            profileScreenViewModel.apply {
-                getUserFullData(profileID, token)
-                getUserTweets(profileID, token)
-                getUserMentions(profileID, token)
-            }
-        }
+        profileScreenViewModel.getUserFullData(profileID, token)
+        profileScreenViewModel.getUserTweets(profileID, token)
+        profileScreenViewModel.getUserMentions(profileID, token)
     }
 
 }
 
+@ExperimentalCoilApi
+@ExperimentalPagerApi
 @Composable
 fun ManageProfileScreen(
     profile: ResponseState<GenericResponse<User?, Includes?, Errors?, Meta?>>,
+    navController: NavController,
+    pagerState: PagerState,
     tweets: @Composable () -> Unit,
     mentions: @Composable () -> Unit,
-    navController: NavController,
     actionFollowUser: (String) -> Unit
 ) {
     when (profile) {
@@ -76,13 +78,10 @@ fun ManageProfileScreen(
         is ResponseState.Success -> {
             ProfileFeed(
                 user = profile.data,
-                tweets = {
-                    tweets.invoke()
-                },
-                mentions = {
-                    mentions.invoke()
-                },
-                navController = navController
+                navController = navController,
+                pagerState = pagerState,
+                tweets = { tweets.invoke() },
+                mentions = { mentions.invoke() }
             ) {
                 actionFollowUser.invoke(it)
             }
@@ -96,7 +95,7 @@ fun ManageProfileScreen(
     }
 }
 
-
+@ExperimentalCoilApi
 @Composable
 fun ManageTweets(
     input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,
@@ -118,7 +117,7 @@ fun ManageTweets(
     }
 }
 
-
+@ExperimentalCoilApi
 @Composable
 fun ManageMentions(
     input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,

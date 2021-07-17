@@ -18,8 +18,6 @@ fun FollowersScreen(
     token: String
 ) {
 
-    val profileIDToDisplayFollowers = remember { mutableStateOf("2244994945") }
-
     val followersToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFollowers
     }.collectAsState()
@@ -33,7 +31,7 @@ fun FollowersScreen(
     }
 
     LaunchedEffect(Unit) {
-        profileScreenViewModel.getUserFollowers(profileIDToDisplayFollowers.value, token)
+        profileScreenViewModel.getUserFollowers(profileID, token)
     }
 
 }

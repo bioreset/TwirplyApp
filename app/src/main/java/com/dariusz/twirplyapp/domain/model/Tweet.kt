@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Tweet(
     @field:Json(name = "id")
-    val id: Long,
+    val id: String,
     @field:Json(name = "author_id")
     val authorID: String,
     @field:Json(name = "created_at")

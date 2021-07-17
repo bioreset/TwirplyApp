@@ -1,13 +1,16 @@
 package com.dariusz.twirplyapp.presentation.screens.tweet
 
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.common.LoadingComponent
-import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweet
+import com.dariusz.twirplyapp.presentation.components.tweets.ShowTweet
 
+@ExperimentalCoilApi
 @Composable
 fun TweetScreen(
     tweetID: String,
@@ -16,19 +19,18 @@ fun TweetScreen(
     token: String
 ) {
 
-    val tweetIDToDisplay = remember { mutableStateOf(tweetID) }
-
     val fullTweetData by remember(tweetScreenViewModel) {
         tweetScreenViewModel.fullTweetContent
     }.collectAsState()
 
     LaunchedEffect(Unit) {
-        tweetScreenViewModel.getAllTweetData(tweetIDToDisplay.value, token)
+        tweetScreenViewModel.getAllTweetData(tweetID, token)
     }
 
     ManageTweetScreen(tweet = fullTweetData, navController)
 }
 
+@ExperimentalCoilApi
 @Composable
 fun ManageTweetScreen(
     tweet: ResponseState<GenericResponse<Tweet?, Includes?, Errors?, Meta?>>,
@@ -40,10 +42,14 @@ fun ManageTweetScreen(
             LoadingComponent()
         }
         is ResponseState.Success -> {
-            DisplayTweet(
-                tweet.data,
-                navController = navController
-            )
+            LazyColumn {
+                item {
+                    ShowTweet(
+                        tweet.data,
+                        navController = navController
+                    )
+                }
+            }
         }
         is ResponseState.Error -> {
             Text("Tweet Error")
