@@ -1,5 +1,6 @@
 package com.dariusz.twirplyapp.presentation.components.tweets
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -25,9 +26,11 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.LocalImageLoader
 import coil.compose.rememberImagePainter
 import com.dariusz.twirplyapp.domain.model.*
+import com.dariusz.twirplyapp.presentation.components.common.PlayVideo
+import com.dariusz.twirplyapp.presentation.components.common.buildFullString
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeShapes
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
-import com.dariusz.twirplyapp.utils.DateUtils.formatDate
+import com.dariusz.twirplyapp.utils.DateUtils.countElapsedTime
 
 @Composable
 fun AuthorPicture(userInfo: UserMinimum) {
@@ -43,6 +46,7 @@ fun AuthorPicture(userInfo: UserMinimum) {
     )
 }
 
+@SuppressLint("NewApi")
 @Composable
 fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?) {
     if (userInfo != null && tweetInfo != null) {
@@ -53,7 +57,7 @@ fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?) {
                 modifier = Modifier.padding(end = 3.dp)
             )
 
-            if (userInfo.isVerified) Icon(
+            if (userInfo.isVerified == true) Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
                 tint = Color(0xFF1DA1F2),
@@ -66,7 +70,7 @@ fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?) {
         Spacer(modifier = Modifier.height(1.dp))
         Row {
             Text(
-                text = " @" + userInfo.username + " ᛫ " + formatDate(tweetInfo.createdAt) +
+                text = " @" + userInfo.username + " ᛫ " + countElapsedTime(tweetInfo.createdAt) + " ago " +
                         " ᛫ " + tweetInfo.sourceApp,
                 style = ThemeTypography.caption,
                 textAlign = TextAlign.Left
@@ -182,6 +186,7 @@ fun TweetImage(media: Media) {
     }
 }
 
+@SuppressLint("NewApi")
 @Composable
 fun TweetPoll(poll: Poll) {
     val counter = remember { mutableStateOf(0) }
@@ -205,7 +210,7 @@ fun TweetPoll(poll: Poll) {
                 .padding(all = 3.dp)
         ) {
             Text(
-                "Votes amount: ${counter.value} ᛫ Ending time: ${formatDate(poll.endTime)}",
+                "Votes amount: ${counter.value} ᛫ Ending in ${countElapsedTime(poll.endTime)}",
                 style = ThemeTypography.caption, textAlign = TextAlign.Center
             )
         }
@@ -213,28 +218,12 @@ fun TweetPoll(poll: Poll) {
 }
 
 @Composable
-fun TweetMedia(media: Media) {
+fun TweetMedia(url: String, media: Media) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Image(
-            painter = rememberImagePainter(
-                data = media.previewImageUrl,
-                imageLoader = LocalImageLoader.current,
-                onExecute = { _, _ -> true },
-                builder = {
-                    crossfade(true)
-                    allowHardware(false)
-                }
-            ),
-            contentDescription = null,
-            modifier = Modifier
-                .heightIn(min = 120.dp)
-                .padding(all = 3.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
+        PlayVideo(url = url, media = media)
         Spacer(Modifier.height(8.dp))
         Text(
             text = "Media: ${media.height}x${media.width} ᛫ ${media.type} ᛫ ${media.durationInMs} ᛫ ${media.previewImageUrl}",
@@ -303,6 +292,13 @@ fun TweetUrlObject(urlObject: UrlObject) {
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+fun TweetTextContent(tweet: Tweet, entity: Entity, navController: NavController) {
+    val tweetContent = tweet.content
+    val finalString = buildFullString(tweetContent, entity, navController)
+    Text(text = finalString, style = ThemeTypography.body1)
 }
 
 @Composable

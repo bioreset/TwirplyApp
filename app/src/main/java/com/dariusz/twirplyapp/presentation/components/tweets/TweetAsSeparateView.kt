@@ -24,37 +24,41 @@ fun DisplayTweetSeparate(
     authorInfo: UserMinimum?,
     includesFromResponse: Includes?,
     navController: NavController?
-) = TweetBuilderSeparate(
-    tweetContentFromResponse = tweetContent,
-    authorInfoFromResponse = authorInfo,
-    includesFromResponse = includesFromResponse,
-    authorProfilePicture = { AuthorPicture(it) },
-    authorandTweetInformation = { author, tweet ->
-        AuthorInfoAndOther(
-            author,
-            tweet
-        )
-    },
-    tweetIconContent = { tweet, nav ->
-        TweetActions(tweet, nav)
-    },
-    tweetDivider = { Divider(thickness = 0.5.dp) },
-    actionOnClick = {
-        navigateToWithArgument(
-            navController!!,
-            Screens.AppScreens.TweetScreen.route,
-            it
-        )
-    },
-    actionOpenProfile = {
-        navigateToWithArgument(
-            navController!!,
-            Screens.AppScreens.ProfileScreen.route,
-            it
-        )
-    },
-    navController = navController!!
-)
+) = navController?.let { it ->
+    TweetBuilderSeparate(
+        tweetContentFromResponse = tweetContent,
+        authorInfoFromResponse = authorInfo,
+        includesFromResponse = includesFromResponse,
+        authorProfilePicture = { author ->
+            AuthorPicture(author)
+        },
+        authorandTweetInformation = { author, tweet ->
+            AuthorInfoAndOther(
+                author,
+                tweet
+            )
+        },
+        tweetIconContent = { tweet, nav ->
+            TweetActions(tweet, nav)
+        },
+        tweetDivider = { Divider(thickness = 0.5.dp) },
+        actionOnClick = { string ->
+            navigateToWithArgument(
+                navController,
+                Screens.AppScreens.TweetScreen.route,
+                string
+            )
+        },
+        actionOpenProfile = { string ->
+            navigateToWithArgument(
+                navController,
+                Screens.AppScreens.ProfileScreen.route,
+                string
+            )
+        },
+        navController = it
+    )
+}
 
 @ExperimentalCoilApi
 @Composable
@@ -102,7 +106,11 @@ fun TweetBuilderSeparate(
                         )
                     }
                 })) {
-                    DisplayMainContent(tweetContentFromResponse, includesFromResponse)
+                    DisplayMainContent(
+                        tweetContentFromResponse,
+                        includesFromResponse,
+                        navController
+                    )
                 }
             }
             if (tweetContentFromResponse != null) {

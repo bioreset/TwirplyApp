@@ -57,6 +57,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.4.0-alpha04")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
+    implementation("androidx.compose.material:material-icons-extended:1.0.0-rc01")
+
     implementation("io.coil-kt:coil-compose:1.3.0")
     implementation("com.google.accompanist:accompanist-pager:0.14.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.14.0")
@@ -78,6 +80,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0-rc01")
+
+    implementation("com.google.android.exoplayer:exoplayer:2.14.1")
+    implementation("com.google.android.exoplayer:exoplayer-ui:2.14.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

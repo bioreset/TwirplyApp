@@ -35,6 +35,11 @@ interface TwirplyAppApiUserService {
         token: String
     ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
+    suspend fun fetchUserIdBasedOnUsername(
+        userName: String,
+        token: String
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
+
 }
 
 class TwirplyAppApiUserServiceImpl : TwirplyAppApiUserService {
@@ -56,5 +61,8 @@ class TwirplyAppApiUserServiceImpl : TwirplyAppApiUserService {
 
     override suspend fun fetchUserFollowingBasedOnId(userID: String, token: String) =
         provideRetrofitUser(token).fetchUserFollowingBasedOnId(userID)
+
+    override suspend fun fetchUserIdBasedOnUsername(userName: String, token: String) =
+        provideRetrofitUser(token).fetchUserIdBasedOnUsername(userName)
 
 }

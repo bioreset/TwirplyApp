@@ -38,9 +38,9 @@ data class UserMinimum(
     @field:Json(name = "username")
     val username: String,
     @field:Json(name = "profile_image_url")
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     @field:Json(name = "verified")
-    val isVerified: Boolean
+    val isVerified: Boolean?
 ) {
     companion object {
         fun minimizeUser(user: User): UserMinimum =

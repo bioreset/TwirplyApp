@@ -31,6 +31,11 @@ interface UserRepository {
         token: String
     ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
+    suspend fun fetchUserIdBasedOnUsername(
+        userName: String,
+        token: String
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
+
 }
 
 class UserRepositoryImpl
@@ -52,6 +57,9 @@ class UserRepositoryImpl
 
     override suspend fun fetchUserFollowingBasedOnId(userID: String, token: String) =
         apiUserService.fetchUserFollowingBasedOnId(userID, token)
+
+    override suspend fun fetchUserIdBasedOnUsername(userName: String, token: String) =
+        apiUserService.fetchUserIdBasedOnUsername(userName, token)
 
 }
 

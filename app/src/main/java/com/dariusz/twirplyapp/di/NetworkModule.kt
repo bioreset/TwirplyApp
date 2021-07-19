@@ -1,5 +1,6 @@
 package com.dariusz.twirplyapp.di
 
+import android.annotation.SuppressLint
 import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuth
 import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthService
 import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthServiceImpl
@@ -12,6 +13,9 @@ import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweetServiceImp
 import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUser
 import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserService
 import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserServiceImpl
+import com.dariusz.twirplyapp.utils.AuthUtils.generateRandomString
+import com.dariusz.twirplyapp.utils.Constants.API_AUTH_ACCESS_TOKEN
+import com.dariusz.twirplyapp.utils.Constants.API_AUTH_CONSUMER_KEY
 import com.dariusz.twirplyapp.utils.Constants.API_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -25,13 +29,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.time.Instant.now
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    @SuppressLint("NewApi")
     @Provides
     fun provideRetrofitService(
+        userContext: Boolean = false,
         basic: Boolean = false,
         bearer: Boolean = false,
         authToken: String = "",
@@ -46,6 +53,24 @@ object NetworkModule {
             Moshi.Builder().add(KotlinJsonAdapterFactory())
                 .build()
         val client = when {
+            userContext -> {
+                OkHttpClient.Builder().apply {
+                    addInterceptor(
+                        Interceptor { chain ->
+                            val builder = chain.request().newBuilder()
+                            builder.header(
+                                "Authorization",
+                                "OAuth oauth_consumer_key=\"$API_AUTH_CONSUMER_KEY\", " +
+                                        "oauth_nonce=\"${generateRandomString()}\", oauth_signature=\"OAUTH_SIGNATURE\", " +
+                                        "oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"${now()}\", " +
+                                        "oauth_token=\"${API_AUTH_ACCESS_TOKEN}\", " +
+                                        "oauth_version=\"1.0\""
+                            )
+                            return@Interceptor chain.proceed(builder.build())
+                        }
+                    )
+                }.addNetworkInterceptor(logging).build()
+            }
             bearer -> {
                 OkHttpClient.Builder().apply {
                     addInterceptor(

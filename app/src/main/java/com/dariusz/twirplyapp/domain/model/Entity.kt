@@ -25,6 +25,8 @@ data class UrlObject(
     val url: String,
     @field:Json(name = "display_url")
     val displayUrl: String,
+    @field:Json(name = "expanded_url")
+    val fullUrl: String,
     @field:Json(name = "images")
     val images: List<ImageObject>?,
     @field:Json(name = "status")

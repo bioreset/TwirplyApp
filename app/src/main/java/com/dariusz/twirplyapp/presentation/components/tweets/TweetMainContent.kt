@@ -1,43 +1,54 @@
 package com.dariusz.twirplyapp.presentation.components.tweets
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
-import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 
 @ExperimentalCoilApi
 @Composable
 fun DisplayMainContent(
     inputTweet: Tweet,
-    inputIncludes: Includes
+    inputIncludes: Includes,
+    navController: NavController
 ) {
     TweetMainContentBuilder(
         tweetData = inputTweet,
         tweetIncludes = inputIncludes,
-        tweetDisplayText = { Text(text = it.content, style = ThemeTypography.body1) },
+        tweetDisplayText = { tweet, entity, nav ->
+            TweetTextContent(tweet, entity, nav)
+        },
         tweetDisplayLink = { TweetUrlObject(it) },
         tweetDisplayImage = { TweetImage(it) },
-        tweetDisplayMedia = { TweetMedia(it) },
+        tweetDisplayMedia = { url, media ->
+            TweetMedia(url, media)
+        },
         tweetDisplayPoll = { TweetPoll(it) },
         tweetDisplayMentionedTweet = { tweet, user ->
             TweetMentioned(tweet, user)
-        })
+        },
+        navController
+    )
 }
 
 @Composable
 fun TweetMainContentBuilder(
     tweetData: Tweet?,
     tweetIncludes: Includes?,
-    tweetDisplayText: @Composable (Tweet) -> Unit,
+    tweetDisplayText: @Composable (Tweet, Entity, NavController) -> Unit,
     tweetDisplayLink: @Composable (UrlObject) -> Unit,
     tweetDisplayImage: @Composable (Media) -> Unit,
-    tweetDisplayMedia: @Composable (Media) -> Unit,
+    tweetDisplayMedia: @Composable (String, Media) -> Unit,
     tweetDisplayPoll: @Composable (Poll) -> Unit,
-    tweetDisplayMentionedTweet: @Composable (Tweet, UserMinimum) -> Unit
+    tweetDisplayMentionedTweet: @Composable (Tweet, UserMinimum) -> Unit,
+    navController: NavController
 ) {
 
-    tweetData?.let { tweetDisplayText.invoke(it) }
+    tweetData?.let { tweetDataElement ->
+        tweetDataElement.entities?.let { entities ->
+            tweetDisplayText.invoke(tweetDataElement, entities, navController)
+        }
+    }
 
     val tweetAttachments = tweetData?.attachments
     val referencedTweets = tweetData?.referencedTweets
@@ -61,8 +72,7 @@ fun TweetMainContentBuilder(
 
             if (mediaObject != null) {
                 if (mediaObject.type == "video") {
-                    tweetDisplayMedia.invoke(mediaObject)
-                    Text("VIDEO_OBJECT")
+                    linkShared?.get(0)?.let { tweetDisplayMedia.invoke(it.fullUrl, mediaObject) }
                 } else if (mediaObject.type == "photo") {
                     tweetDisplayImage.invoke(mediaObject)
                     linkStatus = true

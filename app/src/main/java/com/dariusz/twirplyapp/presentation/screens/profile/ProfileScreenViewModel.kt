@@ -26,6 +26,13 @@ constructor(
     val userFullData: StateFlow<ResponseState<GenericResponse<User?, Includes?, Errors?, Meta?>>> =
         _userFullData
 
+    private var _userIdBasedOnUserName =
+        MutableStateFlow<ResponseState<GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>>>(
+            ResponseState.Idle
+        )
+    val userIdBasedOnUserName: StateFlow<ResponseState<GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>>> =
+        _userIdBasedOnUserName
+
     private var _userFollowing =
         MutableStateFlow<ResponseState<GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>>>(
             ResponseState.Idle
@@ -54,9 +61,19 @@ constructor(
     val userMentions: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>> =
         _userMentions
 
-    fun getUserFullData(userID: String, token: String) = viewModelScope.launch {
+    fun getUserFullDataName(userID: String, token: String) = viewModelScope.launch {
         _userFullData.value = ResponseState.Loading
         val user = userRepository.returnAllUserInfo(userID, token)
+        try {
+            _userFullData.value = ResponseState.Success(user)
+        } catch (exception: Exception) {
+            _userFullData.value = ResponseState.Error(exception)
+        }
+    }
+
+    fun getUserFullDataID(userName: String, token: String) = viewModelScope.launch {
+        _userFullData.value = ResponseState.Loading
+        val user = userRepository.getAllUserDataBasedOnUsername(userName, token)
         try {
             _userFullData.value = ResponseState.Success(user)
         } catch (exception: Exception) {
@@ -104,5 +121,13 @@ constructor(
         }
     }
 
-
+    fun getUserIdBasedOnUserName(userID: String, token: String) = viewModelScope.launch {
+        _userIdBasedOnUserName.value = ResponseState.Loading
+        val userIDX = userRepository.fetchUserIdBasedOnUsername(userID, token)
+        try {
+            _userIdBasedOnUserName.value = ResponseState.Success(userIDX)
+        } catch (exception: Exception) {
+            _userIdBasedOnUserName.value = ResponseState.Error(exception)
+        }
+    }
 }

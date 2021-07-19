@@ -105,7 +105,7 @@ fun TweetObjectBuilder(
                 }
             }
             if (tweetContentFromResponse != null && includesFromResponse != null) {
-                DisplayMainContent(tweetContentFromResponse, includesFromResponse)
+                DisplayMainContent(tweetContentFromResponse, includesFromResponse, navController)
             }
             if (tweetContentFromResponse != null) {
                 tweetIconContent.invoke(tweetContentFromResponse, navController)

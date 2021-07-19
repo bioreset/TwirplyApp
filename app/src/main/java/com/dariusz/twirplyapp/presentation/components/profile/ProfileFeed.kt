@@ -190,9 +190,11 @@ fun Tabs(pagerState: PagerState) {
             TabRowDefaults.Indicator(
                 Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
             )
-        }) {
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Tab(
-            text = { Text("Tweets") },
+            text = { Text("Tweets", style = ThemeTypography.body1) },
             selected = pagerState.currentPage == 0,
             onClick = {
                 scope.launch {
@@ -201,7 +203,7 @@ fun Tabs(pagerState: PagerState) {
             }
         )
         Tab(
-            text = { Text("Tweets and mentions") },
+            text = { Text("Tweets and mentions", style = ThemeTypography.body1) },
             selected = pagerState.currentPage == 1,
             onClick = {
                 scope.launch {

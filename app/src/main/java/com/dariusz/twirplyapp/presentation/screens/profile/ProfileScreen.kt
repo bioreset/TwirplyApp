@@ -38,6 +38,10 @@ fun ProfileScreen(
         profileScreenViewModel.userMentions
     }.collectAsState()
 
+    val profileIdBasedOnName by remember(profileScreenViewModel) {
+        profileScreenViewModel.userIdBasedOnUserName
+    }.collectAsState()
+
     ManageProfileScreen(
         profile = profileToDisplay,
         navController = navController,
@@ -52,12 +56,22 @@ fun ProfileScreen(
         /* TODO: FOLLOW ACTION */
     }
 
-    LaunchedEffect(Unit) {
-        profileScreenViewModel.getUserFullData(profileID, token)
-        profileScreenViewModel.getUserTweets(profileID, token)
-        profileScreenViewModel.getUserMentions(profileID, token)
+    if (!profileID.contains(regex = "[a-zA-Z]+".toRegex())) {
+        LaunchedEffect(Unit) {
+            profileScreenViewModel.getUserFullDataID(profileID, token)
+            profileScreenViewModel.getUserTweets(profileID, token)
+            profileScreenViewModel.getUserMentions(profileID, token)
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            profileScreenViewModel.getUserIdBasedOnUserName(profileID, token)
+        }
+        ManageProfileID(
+            profileIdBasedOnName,
+            profileScreenViewModel,
+            token
+        )
     }
-
 }
 
 @ExperimentalCoilApi
@@ -135,6 +149,37 @@ fun ManageMentions(
         }
         else -> {
             Text("Profile Mentions Here")
+        }
+    }
+}
+
+@ExperimentalCoilApi
+@Composable
+fun ManageProfileID(
+    input: ResponseState<GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>>,
+    profileScreenViewModel: ProfileScreenViewModel = viewModel(),
+    token: String
+) {
+    when (input) {
+        is ResponseState.Loading -> {
+            LoadingComponent()
+        }
+        is ResponseState.Success -> {
+            LaunchedEffect(Unit) {
+                input.data.outputOne?.id?.let {
+                    profileScreenViewModel.getUserFullDataName(
+                        it,
+                        token
+                    )
+                }
+                input.data.outputOne?.id?.let { profileScreenViewModel.getUserTweets(it, token) }
+                input.data.outputOne?.id?.let { profileScreenViewModel.getUserMentions(it, token) }
+            }
+        }
+        is ResponseState.Error -> {
+            Text("Profile Mentions Error")
+        }
+        else -> {
         }
     }
 }

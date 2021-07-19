@@ -84,7 +84,7 @@ fun AuthorInfo(userInfo: UserMinimum) {
             modifier = Modifier.padding(start = 8.dp, end = 4.dp)
         )
 
-        if (userInfo.isVerified) Icon(
+        if (userInfo.isVerified == true) Icon(
             imageVector = Icons.Default.CheckCircle,
             contentDescription = null,
             tint = Color(0xFF1DA1F2),

@@ -6,10 +6,8 @@ import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidView
 
-val linkToLogIn = ""
-
 @Composable
-fun OpenLink() {
+fun OpenLink(url: String) {
     AndroidView(factory = {
         WebView(it).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -17,10 +15,10 @@ fun OpenLink() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             webViewClient = WebViewClient()
-            loadUrl(linkToLogIn)
+            loadUrl(url)
         }
     }, update = {
-        it.loadUrl(linkToLogIn)
+        it.loadUrl(url)
     }
     )
 }

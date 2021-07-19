@@ -8,8 +8,6 @@ import retrofit2.http.Query
 
 interface TwirplyAppApiAuth {
 
-    //OAUTH 2.0 BEARER
-
     @Headers("Content-Type: application/x-www-form-urlencoded;charset=UTF-8")
     @POST("oauth2/token")
     suspend fun getBearerToken(
@@ -21,5 +19,6 @@ interface TwirplyAppApiAuth {
     suspend fun invalidateBearerToken(
         @Body bearerTokenToInvalidate: String
     ): AuthResponse
+
 
 }

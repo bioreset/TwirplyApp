@@ -15,7 +15,6 @@ interface TwirplyAppApiSearch {
         @Query("tweet.fields") tweetFields: String? = API_TWEET_FIELDS,
         @Query("poll.fields") tweetPoll: String? = Constants.API_POLL_FIELDS,
         @Query("media.fields") tweetMedia: String? = Constants.API_MEDIA_FIELDS,
-        @Query("place.fields") tweetPlace: String? = Constants.API_PLACE_FIELDS,
         @Query("user.fields") tweetUser: String = Constants.API_USER_FIELDS_COMPACT
     ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 

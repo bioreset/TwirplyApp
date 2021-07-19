@@ -50,5 +50,10 @@ interface TwirplyAppApiUser {
         @Query("user.fields") userFields: String = API_USER_FIELDS_COMPACT,
     ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
 
+    @GET("2/users/by/username/{username}")
+    suspend fun fetchUserIdBasedOnUsername(
+        @Path("username") userName: String,
+    ): GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>
+
 
 }

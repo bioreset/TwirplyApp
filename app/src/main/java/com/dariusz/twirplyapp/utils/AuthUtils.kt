@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.dariusz.twirplyapp.utils.Constants.API_AUTH_CONSUMER_KEY
 import com.dariusz.twirplyapp.utils.Constants.API_AUTH_CONSUMER_SECRET
 import java.util.*
+import kotlin.streams.asSequence
 
 object AuthUtils {
 
@@ -19,5 +20,14 @@ object AuthUtils {
         encodeBase64(
             "$API_AUTH_CONSUMER_KEY:$API_AUTH_CONSUMER_SECRET"
         )
+
+    fun generateRandomString(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+        val output = ""
+        return Random().ints(32)
+            .asSequence()
+            .map(chars::get)
+            .joinToString(output)
+    }
 
 }

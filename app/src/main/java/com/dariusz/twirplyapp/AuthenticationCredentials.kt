@@ -5,3 +5,5 @@ package com.dariusz.twirplyapp
 const val AUTH_CONSUMER_KEY = ""
 
 const val AUTH_CONSUMER_SECRET = ""
+
+const val AUTH_TOKEN = ""
