@@ -19,8 +19,6 @@ data class User(
     val description: String,
     @field:Json(name = "verified")
     val isVerified: Boolean,
-    @field:Json(name = "location")
-    val location: String,
     @field:Json(name = "url")
     val url: String,
     @field:Json(name = "pinned_tweet_id")

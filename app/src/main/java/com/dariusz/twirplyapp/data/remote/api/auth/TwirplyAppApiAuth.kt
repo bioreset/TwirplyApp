@@ -1,10 +1,8 @@
 package com.dariusz.twirplyapp.data.remote.api.auth
 
 import com.dariusz.twirplyapp.domain.model.AuthResponse
-import retrofit2.http.Body
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.Query
+import com.dariusz.twirplyapp.domain.model.AuthResponseInitial
+import retrofit2.http.*
 
 interface TwirplyAppApiAuth {
 
@@ -19,6 +17,18 @@ interface TwirplyAppApiAuth {
     suspend fun invalidateBearerToken(
         @Body bearerTokenToInvalidate: String
     ): AuthResponse
+
+    @POST("oauth/request_token")
+    suspend fun requestOAuthToken(): AuthResponseInitial
+
+    @GET("oauth/authorize")
+    suspend fun authorizeUser(): String
+
+    @POST("oauth/access_token")
+    suspend fun fetchAccessToken(
+        @Query("oauth_token") oauthToken: String,
+        @Query("oauth_verifier") oauthVerifier: String
+    ): AuthResponseInitial
 
 
 }

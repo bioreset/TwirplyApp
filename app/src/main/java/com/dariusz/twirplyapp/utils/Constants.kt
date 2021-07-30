@@ -3,14 +3,19 @@ package com.dariusz.twirplyapp.utils
 import com.dariusz.twirplyapp.AUTH_CONSUMER_KEY
 import com.dariusz.twirplyapp.AUTH_CONSUMER_SECRET
 import com.dariusz.twirplyapp.AUTH_TOKEN
+import com.dariusz.twirplyapp.AUTH_TOKEN_SECRET
 
 object Constants {
 
     //API SETUP
     const val API_URL = "https://api.twitter.com/"
+    const val API_AUTH_URL = "https://api.twitter.com/oauth/authorize"
+    const val API_AUTH_POST_URL = "1.1/statuses/update.json&include_entries=true"
+
     const val API_AUTH_CONSUMER_KEY = AUTH_CONSUMER_KEY
     const val API_AUTH_CONSUMER_SECRET = AUTH_CONSUMER_SECRET
     const val API_AUTH_ACCESS_TOKEN = AUTH_TOKEN
+    const val API_AUTH_ACCESS_TOKEN_SECRET = AUTH_TOKEN_SECRET
 
     //TWEET SETUP
     const val API_TWEET_FIELDS =
@@ -27,7 +32,7 @@ object Constants {
 
     //USER SETUP
     const val API_USER_FIELDS_FULL =
-        "created_at,description,entities,id,location,name,pinned_tweet_id," +
+        "created_at,description,entities,id,name,pinned_tweet_id," +
                 "profile_image_url,protected,public_metrics,url,username,verified,withheld"
 
     const val API_USER_FIELDS_COMPACT =

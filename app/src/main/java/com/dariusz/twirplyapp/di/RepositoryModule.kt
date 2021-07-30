@@ -1,9 +1,11 @@
 package com.dariusz.twirplyapp.di
 
-import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiAuthService
-import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiSearchService
-import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiTweetService
-import com.dariusz.twirplyapp.di.NetworkModule.provideTwirplyAppApiUserService
+import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweetServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.useractions.TwirplyAppApiUserActionsServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.usercontext.TwirplyAppApiUserContextServiceImpl
 import com.dariusz.twirplyapp.domain.repository.auth.AuthRepository
 import com.dariusz.twirplyapp.domain.repository.auth.AuthRepositoryImpl
 import com.dariusz.twirplyapp.domain.repository.search.SearchRepository
@@ -12,6 +14,10 @@ import com.dariusz.twirplyapp.domain.repository.tweet.TweetRepository
 import com.dariusz.twirplyapp.domain.repository.tweet.TweetRepositoryImpl
 import com.dariusz.twirplyapp.domain.repository.user.UserRepository
 import com.dariusz.twirplyapp.domain.repository.user.UserRepositoryImpl
+import com.dariusz.twirplyapp.domain.repository.useractions.UserActionsRepository
+import com.dariusz.twirplyapp.domain.repository.useractions.UserActionsRepositoryImpl
+import com.dariusz.twirplyapp.domain.repository.usercontext.UserContextRepository
+import com.dariusz.twirplyapp.domain.repository.usercontext.UserContextRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,25 +30,35 @@ object RepositoryModule {
     @Provides
     fun provideAuthRepository(
     ): AuthRepository = AuthRepositoryImpl(
-        provideTwirplyAppApiAuthService()
+        TwirplyAppApiAuthServiceImpl()
     )
 
     @Provides
     fun provideSearchRepository(
     ): SearchRepository = SearchRepositoryImpl(
-        provideTwirplyAppApiSearchService()
+        TwirplyAppApiSearchServiceImpl()
     )
 
     @Provides
     fun provideTweetRepository(
     ): TweetRepository = TweetRepositoryImpl(
-        provideTwirplyAppApiTweetService()
+        TwirplyAppApiTweetServiceImpl()
     )
 
     @Provides
     fun provideUserRepository(
     ): UserRepository = UserRepositoryImpl(
-        provideTwirplyAppApiUserService()
+        TwirplyAppApiUserServiceImpl()
+    )
+
+    @Provides
+    fun provideUserActionRepository(): UserActionsRepository = UserActionsRepositoryImpl(
+        TwirplyAppApiUserActionsServiceImpl()
+    )
+
+    @Provides
+    fun provideUserContextRepository(): UserContextRepository = UserContextRepositoryImpl(
+        TwirplyAppApiUserContextServiceImpl()
     )
 
 }

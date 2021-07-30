@@ -2,18 +2,14 @@ package com.dariusz.twirplyapp.di
 
 import android.annotation.SuppressLint
 import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuth
-import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthService
-import com.dariusz.twirplyapp.data.remote.api.auth.TwirplyAppApiAuthServiceImpl
 import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearch
-import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchService
-import com.dariusz.twirplyapp.data.remote.api.search.TwirplyAppApiSearchServiceImpl
 import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweet
-import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweetService
-import com.dariusz.twirplyapp.data.remote.api.tweet.TwirplyAppApiTweetServiceImpl
 import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUser
-import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserService
-import com.dariusz.twirplyapp.data.remote.api.user.TwirplyAppApiUserServiceImpl
+import com.dariusz.twirplyapp.data.remote.api.useractions.TwirplyAppApiUserActions
+import com.dariusz.twirplyapp.data.remote.api.usercontext.TwirplyAppApiUserContext
+import com.dariusz.twirplyapp.utils.AuthUtils.escapeUrl
 import com.dariusz.twirplyapp.utils.AuthUtils.generateRandomString
+import com.dariusz.twirplyapp.utils.AuthUtils.getTheSignature
 import com.dariusz.twirplyapp.utils.Constants.API_AUTH_ACCESS_TOKEN
 import com.dariusz.twirplyapp.utils.Constants.API_AUTH_CONSUMER_KEY
 import com.dariusz.twirplyapp.utils.Constants.API_URL
@@ -38,6 +34,7 @@ object NetworkModule {
     @SuppressLint("NewApi")
     @Provides
     fun provideRetrofitService(
+        initial: Boolean = false,
         userContext: Boolean = false,
         basic: Boolean = false,
         bearer: Boolean = false,
@@ -53,6 +50,27 @@ object NetworkModule {
             Moshi.Builder().add(KotlinJsonAdapterFactory())
                 .build()
         val client = when {
+            initial -> {
+                OkHttpClient.Builder().apply {
+                    addInterceptor(
+                        Interceptor { chain ->
+                            val builder = chain.request().newBuilder()
+                            builder.header(
+                                "Authorization",
+                                "OAuth oauth_consumer_key=\"$API_AUTH_CONSUMER_KEY\", " +
+                                        "oauth_callback=\"${("example://").escapeUrl()}\", " +
+                                        "oauth_nonce=\"${generateRandomString()}\", " +
+                                        "oauth_signature=\"${getTheSignature()}\", " +
+                                        "oauth_signature_method=\"HMAC-SHA1\", " +
+                                        "oauth_timestamp=\"${now()}\", " +
+                                        "oauth_token=\"${API_AUTH_ACCESS_TOKEN}\", " +
+                                        "oauth_version=\"1.0\""
+                            )
+                            return@Interceptor chain.proceed(builder.build())
+                        }
+                    )
+                }.addNetworkInterceptor(logging).build()
+            }
             userContext -> {
                 OkHttpClient.Builder().apply {
                     addInterceptor(
@@ -61,8 +79,10 @@ object NetworkModule {
                             builder.header(
                                 "Authorization",
                                 "OAuth oauth_consumer_key=\"$API_AUTH_CONSUMER_KEY\", " +
-                                        "oauth_nonce=\"${generateRandomString()}\", oauth_signature=\"OAUTH_SIGNATURE\", " +
-                                        "oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"${now()}\", " +
+                                        "oauth_nonce=\"${generateRandomString()}\", " +
+                                        "oauth_signature=\"${getTheSignature()}\", " +
+                                        "oauth_signature_method=\"HMAC-SHA1\", " +
+                                        "oauth_timestamp=\"${now()}\", " +
                                         "oauth_token=\"${API_AUTH_ACCESS_TOKEN}\", " +
                                         "oauth_version=\"1.0\""
                             )
@@ -108,6 +128,7 @@ object NetworkModule {
             .build()
     }
 
+
     @Provides
     fun provideRetrofitSearch(token: String): TwirplyAppApiSearch =
         provideRetrofitService(
@@ -130,27 +151,31 @@ object NetworkModule {
         ).create(TwirplyAppApiUser::class.java)
 
     @Provides
+    fun provideRetrofitAuthInitial(): TwirplyAppApiAuth =
+        provideRetrofitService(
+            initial = true
+        ).create(TwirplyAppApiAuth::class.java)
+
+    @Provides
     fun provideRetrofitAuth(token: String): TwirplyAppApiAuth =
         provideRetrofitService(
             basic = true,
             authToken = token
         ).create(TwirplyAppApiAuth::class.java)
 
+    @Provides
+    fun provideRetrofitUserActions(token: String): TwirplyAppApiUserActions =
+        provideRetrofitService(
+            userContext = true,
+            authToken = token
+        ).create(TwirplyAppApiUserActions::class.java)
 
     @Provides
-    fun provideTwirplyAppApiTweetService(): TwirplyAppApiTweetService =
-        TwirplyAppApiTweetServiceImpl()
+    fun provideRetrofitUserContext(token: String): TwirplyAppApiUserContext =
+        provideRetrofitService(
+            userContext = true,
+            authToken = token
+        ).create(TwirplyAppApiUserContext::class.java)
 
-    @Provides
-    fun provideTwirplyAppApiUserService(): TwirplyAppApiUserService =
-        TwirplyAppApiUserServiceImpl()
-
-    @Provides
-    fun provideTwirplyAppApiSearchService(): TwirplyAppApiSearchService =
-        TwirplyAppApiSearchServiceImpl()
-
-    @Provides
-    fun provideTwirplyAppApiAuthService(): TwirplyAppApiAuthService =
-        TwirplyAppApiAuthServiceImpl()
 
 }

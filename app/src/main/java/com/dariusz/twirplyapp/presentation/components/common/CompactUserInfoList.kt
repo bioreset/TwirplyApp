@@ -1,7 +1,6 @@
 package com.dariusz.twirplyapp.presentation.components.common
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,10 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.LocalImageLoader
-import coil.compose.rememberImagePainter
+import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.UserMinimum
 
+@ExperimentalCoilApi
 @Composable
 fun CompactUserInfoList(
     input: List<UserMinimum>,
@@ -36,6 +35,7 @@ fun CompactUserInfoList(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun CompactUserInfo(
     input: UserMinimum,
@@ -57,22 +57,21 @@ fun CompactUserInfo(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun AuthorPicture(userInfo: UserMinimum) {
-    Image(
-        painter = rememberImagePainter(
-            data = userInfo.profileImageUrl,
-            imageLoader = LocalImageLoader.current
-        ),
-        contentDescription = null,
-        modifier = Modifier
-            .size(50.dp)
-            .clip(shape = RoundedCornerShape(45.dp))
-            .border(
-                border = BorderStroke(width = 4.dp, color = MaterialTheme.colors.surface),
-                shape = RoundedCornerShape(45.dp)
-            )
-    )
+    userInfo.profileImageUrl?.let {
+        DisplayImage(
+            url = it,
+            modifier = Modifier
+                .size(50.dp)
+                .clip(shape = RoundedCornerShape(45.dp))
+                .border(
+                    border = BorderStroke(width = 4.dp, color = MaterialTheme.colors.surface),
+                    shape = RoundedCornerShape(45.dp)
+                )
+        )
+    }
 }
 
 @Composable

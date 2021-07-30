@@ -5,7 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,14 +15,16 @@ import com.dariusz.twirplyapp.di.RepositoryModule.provideTweetRepository
 import com.dariusz.twirplyapp.di.RepositoryModule.provideUserRepository
 import com.dariusz.twirplyapp.presentation.MainViewModel
 import com.dariusz.twirplyapp.presentation.screens.feed.FeedScreen
-import com.dariusz.twirplyapp.presentation.screens.profile.*
+import com.dariusz.twirplyapp.presentation.screens.profile.FollowersScreen
+import com.dariusz.twirplyapp.presentation.screens.profile.FollowingScreen
+import com.dariusz.twirplyapp.presentation.screens.profile.ProfileScreen
+import com.dariusz.twirplyapp.presentation.screens.profile.ProfileScreenViewModel
 import com.dariusz.twirplyapp.presentation.screens.search.SearchResults
 import com.dariusz.twirplyapp.presentation.screens.search.SearchScreen
 import com.dariusz.twirplyapp.presentation.screens.search.SearchScreenViewModel
-import com.dariusz.twirplyapp.presentation.screens.search.SearchScreenViewModelFactory
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreen
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreenViewModel
-import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreenViewModelFactory
+import com.dariusz.twirplyapp.utils.ViewModelUtils.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 @ExperimentalCoilApi
@@ -32,35 +33,38 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 @Composable
 fun MainNavigationHost(
     navController: NavController,
-    idOfLoggedInUser: Long = 0,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel
 ) {
-    val searchScreenViewModel: SearchScreenViewModel = viewModel(
-        factory = SearchScreenViewModelFactory(
-            provideSearchRepository()
-        )
-    )
-    val tweetScreenViewModel: TweetScreenViewModel = viewModel(
-        factory = TweetScreenViewModelFactory(
-            provideTweetRepository()
-        )
-    )
-    val profileScreenViewModel: ProfileScreenViewModel = viewModel(
-        factory = ProfileScreenViewModelFactory(
-            provideUserRepository(),
-            provideTweetRepository()
-        )
-    )
+
     val tokenRemembered by remember(mainViewModel) {
         mainViewModel.bearerToken
     }.collectAsState()
+
+    val searchScreenViewModel = viewModel {
+        SearchScreenViewModel(
+            provideSearchRepository()
+        )
+    }
+
+    val profileScreenViewModel = viewModel {
+        ProfileScreenViewModel(
+            provideUserRepository(),
+            provideTweetRepository()
+        )
+    }
+
+    val tweetScreenViewModel = viewModel {
+        TweetScreenViewModel(
+            provideTweetRepository()
+        )
+    }
 
     NavHost(
         navController = navController as NavHostController,
         startDestination = Screens.AppScreens.FeedScreen.route
     ) {
         composable(route = Screens.AppScreens.FeedScreen.route) {
-            FeedScreen(idOfLoggedInUser.toString(), navController)
+            FeedScreen(navController)
         }
         composable(route = Screens.AppScreens.SearchScreen.route) {
             SearchScreen(navController)
@@ -75,16 +79,16 @@ fun MainNavigationHost(
         }
         composable(route = Screens.AppScreens.ProfileScreen.route.plus("/{user_id}")) {
             ProfileScreen(
-                it.arguments?.getString("user_id") ?: "",
-                profileScreenViewModel,
+                it.arguments?.getString("user_id") ?: "2244994945",
                 navController,
+                profileScreenViewModel = profileScreenViewModel,
                 tokenRemembered
             )
         }
         composable(route = Screens.AppScreens.FollowersScreen.route.plus("/{user_id}")) {
             FollowersScreen(
                 it.arguments?.getString("user_id") ?: "",
-                profileScreenViewModel,
+                profileScreenViewModel = profileScreenViewModel,
                 navController,
                 tokenRemembered
             )
@@ -92,7 +96,7 @@ fun MainNavigationHost(
         composable(route = Screens.AppScreens.FollowingScreen.route.plus("/{user_id}")) {
             FollowingScreen(
                 it.arguments?.getString("user_id") ?: "",
-                profileScreenViewModel,
+                profileScreenViewModel = profileScreenViewModel,
                 navController,
                 tokenRemembered
             )

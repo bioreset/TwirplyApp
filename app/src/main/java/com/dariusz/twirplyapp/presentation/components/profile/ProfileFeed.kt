@@ -1,7 +1,6 @@
 package com.dariusz.twirplyapp.presentation.components.profile
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,9 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.LocalImageLoader
-import coil.compose.rememberImagePainter
 import com.dariusz.twirplyapp.domain.model.*
+import com.dariusz.twirplyapp.presentation.components.common.DisplayImage
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
@@ -112,8 +110,7 @@ fun UserInfo(user: User, navController: NavController) {
                 style = ThemeTypography.body2,
                 modifier = Modifier
                     .clickable(onClick = {
-                        navigateToWithArgument(
-                            navController,
+                        navController.navigateToWithArgument(
                             Screens.AppScreens.FollowingScreen.route,
                             user.id
                         )
@@ -130,8 +127,7 @@ fun UserInfo(user: User, navController: NavController) {
                 style = ThemeTypography.body2,
                 modifier = Modifier
                     .clickable(onClick = {
-                        navigateToWithArgument(
-                            navController,
+                        navController.navigateToWithArgument(
                             Screens.AppScreens.FollowersScreen.route,
                             user.id
                         )
@@ -142,19 +138,11 @@ fun UserInfo(user: User, navController: NavController) {
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 private fun Avatar(user: User) {
-    Image(
-        painter = rememberImagePainter(
-            data = user.profileImageUrl,
-            imageLoader = LocalImageLoader.current,
-            onExecute = { _, _ -> true },
-            builder = {
-                crossfade(true)
-                allowHardware(false)
-            }
-        ),
-        contentDescription = null,
+    DisplayImage(
+        url = user.profileImageUrl,
         modifier = Modifier
             .size(50.dp)
             .clip(shape = RoundedCornerShape(40.dp))

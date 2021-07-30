@@ -7,14 +7,16 @@ import androidx.navigation.NavController
 
 object NavigationUtils {
 
-    fun navigateToWithArgument(
-        navController: NavController,
+    fun NavController.navigateToWithArgument(
         screenRoute: String,
         argument: String
-    ) = navController.navigate(screenRoute.plus("/$argument")) {
+    ) = navigate(screenRoute.plus("/$argument")) {
+        graph.startDestinationRoute?.let { route ->
+            popUpTo(route)
+        }
         launchSingleTop = true
+        restoreState = true
     }
-
 
     fun openInBrowser(context: Context, url: String) {
         val defaultBrowser =
@@ -22,4 +24,5 @@ object NavigationUtils {
         defaultBrowser.data = Uri.parse(url)
         return context.startActivity(defaultBrowser)
     }
+
 }

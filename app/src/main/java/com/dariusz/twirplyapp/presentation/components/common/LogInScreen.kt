@@ -1,6 +1,5 @@
 package com.dariusz.twirplyapp.presentation.components.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -11,10 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import coil.compose.LocalImageLoader
-import coil.compose.rememberImagePainter
+import coil.annotation.ExperimentalCoilApi
 
-val linkToImage =
+private const val linkToImage =
     "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/auth-docs/sign-in-with-twitter-link.png.twimg.1920.png"
 
 @Composable
@@ -49,19 +47,18 @@ fun LogInScreen(
 
 }
 
+@ExperimentalCoilApi
 @Composable
 fun SignInWithTwitterButton(action: @Composable () -> Unit) {
     val buttonClicked = remember { mutableStateOf(false) }
-    Image(
-        painter = rememberImagePainter(
-            data = linkToImage,
-            imageLoader = LocalImageLoader.current
-        ),
-        contentDescription = "Sign In With Twitter",
+    DisplayImage(
+        url = linkToImage,
         modifier = Modifier
             .clickable(onClick = {
                 buttonClicked.value = true
+
             })
+            .size(130.dp)
     )
     if (buttonClicked.value) action.invoke()
 }

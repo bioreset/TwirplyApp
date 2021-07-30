@@ -105,11 +105,11 @@ fun rememberVideoPlayerLifecycleObserver(player: SimpleExoPlayer) =
                 Lifecycle.Event.ON_RESUME -> player.playWhenReady
                 Lifecycle.Event.ON_PAUSE -> player.pause()
                 Lifecycle.Event.ON_STOP -> {
-                    player.stop(false)
+                    player.stop()
                     !player.playWhenReady
                 }
                 Lifecycle.Event.ON_DESTROY -> {
-                    player.stop(true)
+                    player.stop()
                     player.release()
                 }
                 else -> throw IllegalStateException()

@@ -1,14 +1,14 @@
 package com.dariusz.twirplyapp.presentation.screens.profile
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.domain.repository.tweet.TweetRepository
 import com.dariusz.twirplyapp.domain.repository.user.UserRepository
+import com.dariusz.twirplyapp.utils.ViewModelUtils.launchVMTask
+import com.dariusz.twirplyapp.utils.ViewModelUtils.manageResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,73 +61,34 @@ constructor(
     val userMentions: StateFlow<ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>> =
         _userMentions
 
-    fun getUserFullDataName(userID: String, token: String) = viewModelScope.launch {
-        _userFullData.value = ResponseState.Loading
-        val user = userRepository.returnAllUserInfo(userID, token)
-        try {
-            _userFullData.value = ResponseState.Success(user)
-        } catch (exception: Exception) {
-            _userFullData.value = ResponseState.Error(exception)
-        }
+    fun getUserFullDataName(userID: String, token: String) = launchVMTask {
+        manageResult(_userFullData, userRepository.returnAllUserInfo(userID, token))
     }
 
-    fun getUserFullDataID(userName: String, token: String) = viewModelScope.launch {
-        _userFullData.value = ResponseState.Loading
-        val user = userRepository.getAllUserDataBasedOnUsername(userName, token)
-        try {
-            _userFullData.value = ResponseState.Success(user)
-        } catch (exception: Exception) {
-            _userFullData.value = ResponseState.Error(exception)
-        }
+    fun getUserFullDataID(userName: String, token: String) = launchVMTask {
+        manageResult(_userFullData, userRepository.getAllUserDataBasedOnUsername(userName, token))
     }
 
-    fun getUserFollowing(userID: String, token: String) = viewModelScope.launch {
-        _userFollowing.value = ResponseState.Loading
-        val following = userRepository.fetchUserFollowingBasedOnId(userID, token)
-        try {
-            _userFollowing.value = ResponseState.Success(following)
-        } catch (exception: Exception) {
-            _userFollowing.value = ResponseState.Error(exception)
-        }
+    fun getUserFollowing(userID: String, token: String) = launchVMTask {
+        manageResult(_userFollowing, userRepository.fetchUserFollowingBasedOnId(userID, token))
     }
 
-    fun getUserFollowers(userID: String, token: String) = viewModelScope.launch {
-        _userFollowers.value = ResponseState.Loading
-        val followers = userRepository.fetchUserFollowersBasedOnId(userID, token)
-        try {
-            _userFollowers.value = ResponseState.Success(followers)
-        } catch (exception: Exception) {
-            _userFollowers.value = ResponseState.Error(exception)
-        }
+    fun getUserFollowers(userID: String, token: String) = launchVMTask {
+        manageResult(_userFollowers, userRepository.fetchUserFollowersBasedOnId(userID, token))
     }
 
-    fun getUserTweets(userID: String, token: String) = viewModelScope.launch {
-        _userTweets.value = ResponseState.Loading
-        val userTweets = tweetRepository.returnTweetsOfUser(userID, token = token)
-        try {
-            _userTweets.value = ResponseState.Success(userTweets)
-        } catch (exception: Exception) {
-            _userTweets.value = ResponseState.Error(exception)
-        }
+    fun getUserTweets(userID: String, token: String) = launchVMTask {
+        manageResult(_userTweets, tweetRepository.returnTweetsOfUser(userID, token))
     }
 
-    fun getUserMentions(userID: String, token: String) = viewModelScope.launch {
-        _userMentions.value = ResponseState.Loading
-        val userMentions = tweetRepository.returnMentionsOfUser(userID, token = token)
-        try {
-            _userMentions.value = ResponseState.Success(userMentions)
-        } catch (exception: Exception) {
-            _userMentions.value = ResponseState.Error(exception)
-        }
+    fun getUserMentions(userID: String, token: String) = launchVMTask {
+        manageResult(_userMentions, tweetRepository.returnMentionsOfUser(userID, token))
     }
 
-    fun getUserIdBasedOnUserName(userID: String, token: String) = viewModelScope.launch {
-        _userIdBasedOnUserName.value = ResponseState.Loading
-        val userIDX = userRepository.fetchUserIdBasedOnUsername(userID, token)
-        try {
-            _userIdBasedOnUserName.value = ResponseState.Success(userIDX)
-        } catch (exception: Exception) {
-            _userIdBasedOnUserName.value = ResponseState.Error(exception)
-        }
+    fun getUserIdBasedOnUserName(userID: String, token: String) = launchVMTask {
+        manageResult(
+            _userIdBasedOnUserName,
+            userRepository.fetchUserIdBasedOnUsername(userID, token)
+        )
     }
 }

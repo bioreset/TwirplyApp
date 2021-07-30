@@ -57,8 +57,7 @@ fun DisplayTweetObject(
     },
     tweetDivider = { Divider(thickness = 0.5.dp) },
     actionOpenProfile = {
-        navigateToWithArgument(
-            navController,
+        navController.navigateToWithArgument(
             Screens.AppScreens.ProfileScreen.route,
             it
         )

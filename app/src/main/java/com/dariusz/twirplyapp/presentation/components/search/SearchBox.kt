@@ -45,8 +45,7 @@ fun SearchBox(
             keyboardActions = KeyboardActions(
                 onSearch = {
                     keyboardController?.hide()
-                    navigateToWithArgument(
-                        navController,
+                    navController.navigateToWithArgument(
                         Screens.AppScreens.SearchResults.route,
                         searchQuery
                     )

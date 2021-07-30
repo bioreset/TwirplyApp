@@ -1,7 +1,6 @@
 package com.dariusz.twirplyapp.presentation.components.tweets
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,32 +17,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.LocalImageLoader
-import coil.compose.rememberImagePainter
 import com.dariusz.twirplyapp.domain.model.*
+import com.dariusz.twirplyapp.presentation.components.common.DisplayImage
 import com.dariusz.twirplyapp.presentation.components.common.PlayVideo
 import com.dariusz.twirplyapp.presentation.components.common.buildFullString
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeShapes
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 import com.dariusz.twirplyapp.utils.DateUtils.countElapsedTime
 
+@ExperimentalCoilApi
 @Composable
 fun AuthorPicture(userInfo: UserMinimum) {
-    Image(
-        painter = rememberImagePainter(
-            data = userInfo.profileImageUrl,
-            imageLoader = LocalImageLoader.current
-        ),
-        contentDescription = null,
-        modifier = Modifier
-            .size(40.dp)
-            .clip(shape = RoundedCornerShape(40.dp))
-    )
+    userInfo.profileImageUrl?.let {
+        DisplayImage(
+            url = it, modifier = Modifier
+                .size(40.dp)
+                .clip(shape = RoundedCornerShape(40.dp))
+        )
+    }
 }
 
 @SuppressLint("NewApi")
@@ -90,8 +85,7 @@ fun TweetIconSection(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .fillMaxWidth()
     ) {
         IconButton(onClick = { actionReply.invoke(tweet) }) {
             Row {
@@ -160,29 +154,22 @@ fun TweetIconSection(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun TweetImage(media: Media) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Image(
-            painter = rememberImagePainter(
-                data = media.url,
-                imageLoader = LocalImageLoader.current,
-                onExecute = { _, _ -> true },
-                builder = {
-                    crossfade(true)
-                    allowHardware(false)
-                }
-            ),
-            contentDescription = null,
-            modifier = Modifier
-                .heightIn(min = 120.dp)
-                .padding(all = 3.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
+        media.url?.let {
+            DisplayImage(
+                url = it,
+                modifier = Modifier
+                    .heightIn(min = 120.dp)
+                    .padding(all = 3.dp)
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -253,22 +240,14 @@ fun TweetUrlObject(urlObject: UrlObject) {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Image(
-            painter = rememberImagePainter(
-                data = urlObject.images?.get(0)?.url,
-                imageLoader = LocalImageLoader.current,
-                onExecute = { _, _ -> true },
-                builder = {
-                    crossfade(true)
-                    allowHardware(false)
-                }
-            ),
-            contentDescription = null,
-            modifier = Modifier
-                .heightIn(min = 120.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
+        urlObject.images?.get(0)?.url?.let {
+            DisplayImage(
+                url = it,
+                modifier = Modifier
+                    .heightIn(min = 120.dp)
+                    .fillMaxWidth()
+            )
+        }
         Spacer(Modifier.height(3.dp))
         urlObject.title?.let {
             Text(

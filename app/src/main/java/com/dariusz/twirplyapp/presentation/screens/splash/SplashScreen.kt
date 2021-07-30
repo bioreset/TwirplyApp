@@ -5,14 +5,17 @@ import com.dariusz.twirplyapp.presentation.components.common.LogInScreen
 
 @Composable
 fun SplashScreen(
-    action: () -> Unit
+    actionLoginWithAccount: () -> Unit,
+    actionLoginWithoutAccount: () -> Unit
 ) {
 
     LogInScreen(
         logInAction = {
-
+            actionLoginWithAccount.invoke()
         },
-        getIntoAppWithoutLoggingIn = { action.invoke() }
+        getIntoAppWithoutLoggingIn = {
+            actionLoginWithoutAccount.invoke()
+        }
     )
 
 }

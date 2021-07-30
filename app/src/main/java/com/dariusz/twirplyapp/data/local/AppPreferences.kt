@@ -35,12 +35,12 @@ class AppPreferencesImpl
     context: Context
 ) : AppPreferences {
 
-    private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
+    private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = "main_preferences")
     private val dataStore = context._dataStore
 
-    private val userIDPreferencesKey = intPreferencesKey("loggedInUserId")
-    private val isUserLoggedInKey = booleanPreferencesKey("loginStatus")
-    private val tempBearerToken = stringPreferencesKey("bearerToken")
+    private val userIDPreferencesKey = intPreferencesKey("logged_in_user_id")
+    private val isUserLoggedInKey = booleanPreferencesKey("login_status")
+    private val tempBearerToken = stringPreferencesKey("bearer_token")
 
     override suspend fun saveIDOfLoggedInUser(userID: Int) {
         dataStore.edit { preferences ->
@@ -93,4 +93,5 @@ class AppPreferencesImpl
             preferences[tempBearerToken] = ""
         }
     }
+
 }

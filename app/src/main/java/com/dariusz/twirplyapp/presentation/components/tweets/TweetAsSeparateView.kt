@@ -43,15 +43,13 @@ fun DisplayTweetSeparate(
         },
         tweetDivider = { Divider(thickness = 0.5.dp) },
         actionOnClick = { string ->
-            navigateToWithArgument(
-                navController,
+            navController.navigateToWithArgument(
                 Screens.AppScreens.TweetScreen.route,
                 string
             )
         },
         actionOpenProfile = { string ->
-            navigateToWithArgument(
-                navController,
+            navController.navigateToWithArgument(
                 Screens.AppScreens.ProfileScreen.route,
                 string
             )

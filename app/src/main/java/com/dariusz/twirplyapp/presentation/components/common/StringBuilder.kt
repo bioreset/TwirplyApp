@@ -36,8 +36,7 @@ fun buildFullString(
                 end = hashtagsListItem.end,
                 annotation = hashtagsListItem.tag,
                 action = {
-                    navigateToWithArgument(
-                        navController,
+                    navController.navigateToWithArgument(
                         Screens.AppScreens.SearchResults.route,
                         hashtagsListItem.tag
                     )
@@ -52,8 +51,7 @@ fun buildFullString(
                 end = mentionListItem.end,
                 annotation = mentionListItem.username,
                 action = {
-                    navigateToWithArgument(
-                        navController,
+                    navController.navigateToWithArgument(
                         Screens.AppScreens.ProfileScreen.route,
                         mentionListItem.username
                     )

@@ -1,15 +1,13 @@
 package com.dariusz.twirplyapp.presentation.screens.profile
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
-import com.dariusz.twirplyapp.presentation.components.common.LoadingComponent
 import com.dariusz.twirplyapp.presentation.components.profile.ProfileFeed
 import com.dariusz.twirplyapp.presentation.components.profile.UserMentionsTimeline
 import com.dariusz.twirplyapp.presentation.components.profile.UserTweetsTimeline
+import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -19,12 +17,11 @@ import com.google.accompanist.pager.rememberPagerState
 @Composable
 fun ProfileScreen(
     profileID: String,
-    profileScreenViewModel: ProfileScreenViewModel = viewModel(),
     navController: NavController,
-    token: String
+    profileScreenViewModel: ProfileScreenViewModel,
+    token: String,
+    pagerState: PagerState = rememberPagerState(pageCount = 2)
 ) {
-
-    val pagerState = rememberPagerState(pageCount = 2)
 
     val profileToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFullData
@@ -63,14 +60,14 @@ fun ProfileScreen(
             profileScreenViewModel.getUserMentions(profileID, token)
         }
     } else {
-        LaunchedEffect(Unit) {
-            profileScreenViewModel.getUserIdBasedOnUserName(profileID, token)
-        }
         ManageProfileID(
             profileIdBasedOnName,
             profileScreenViewModel,
             token
         )
+        LaunchedEffect(Unit) {
+            profileScreenViewModel.getUserIdBasedOnUserName(profileID, token)
+        }
     }
 }
 
@@ -85,28 +82,19 @@ fun ManageProfileScreen(
     mentions: @Composable () -> Unit,
     actionFollowUser: (String) -> Unit
 ) {
-    when (profile) {
-        is ResponseState.Loading -> {
-            LoadingComponent()
-        }
-        is ResponseState.Success -> {
-            ProfileFeed(
-                user = profile.data,
-                navController = navController,
-                pagerState = pagerState,
-                tweets = { tweets.invoke() },
-                mentions = { mentions.invoke() }
-            ) {
-                actionFollowUser.invoke(it)
-            }
-        }
-        is ResponseState.Error -> {
-            Text("Profile Error")
-        }
-        else -> {
-            Text("Profile Here")
+
+    ManageResponseOnScreen(input = profile) {
+        ProfileFeed(
+            user = it,
+            navController = navController,
+            pagerState = pagerState,
+            tweets = { tweets.invoke() },
+            mentions = { mentions.invoke() }
+        ) {
+            actionFollowUser.invoke(it)
         }
     }
+
 }
 
 @ExperimentalCoilApi
@@ -115,20 +103,11 @@ fun ManageTweets(
     input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,
     navController: NavController
 ) {
-    when (input) {
-        is ResponseState.Loading -> {
-            LoadingComponent()
-        }
-        is ResponseState.Success -> {
-            UserTweetsTimeline(input = input.data, navController = navController)
-        }
-        is ResponseState.Error -> {
-            Text("Profile Tweets Error")
-        }
-        else -> {
-            Text("Profile Tweets Here")
-        }
+
+    ManageResponseOnScreen(input = input) {
+        UserTweetsTimeline(input = it, navController = navController)
     }
+
 }
 
 @ExperimentalCoilApi
@@ -137,49 +116,31 @@ fun ManageMentions(
     input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,
     navController: NavController
 ) {
-    when (input) {
-        is ResponseState.Loading -> {
-            LoadingComponent()
-        }
-        is ResponseState.Success -> {
-            UserMentionsTimeline(input = input.data, navController = navController)
-        }
-        is ResponseState.Error -> {
-            Text("Profile Mentions Error")
-        }
-        else -> {
-            Text("Profile Mentions Here")
-        }
+
+    ManageResponseOnScreen(input = input) {
+        UserMentionsTimeline(input = it, navController = navController)
     }
+
 }
 
 @ExperimentalCoilApi
 @Composable
 fun ManageProfileID(
     input: ResponseState<GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>>,
-    profileScreenViewModel: ProfileScreenViewModel = viewModel(),
+    profileScreenViewModel: ProfileScreenViewModel,
     token: String
 ) {
-    when (input) {
-        is ResponseState.Loading -> {
-            LoadingComponent()
-        }
-        is ResponseState.Success -> {
-            LaunchedEffect(Unit) {
-                input.data.outputOne?.id?.let {
-                    profileScreenViewModel.getUserFullDataName(
-                        it,
-                        token
-                    )
-                }
-                input.data.outputOne?.id?.let { profileScreenViewModel.getUserTweets(it, token) }
-                input.data.outputOne?.id?.let { profileScreenViewModel.getUserMentions(it, token) }
+    ManageResponseOnScreen(input = input) {
+        LaunchedEffect(Unit) {
+            it.outputOne?.id?.let {
+                profileScreenViewModel.getUserFullDataName(
+                    it,
+                    token
+                )
             }
-        }
-        is ResponseState.Error -> {
-            Text("Profile Mentions Error")
-        }
-        else -> {
+            it.outputOne?.id?.let { profileScreenViewModel.getUserTweets(it, token) }
+            it.outputOne?.id?.let { profileScreenViewModel.getUserMentions(it, token) }
         }
     }
+
 }

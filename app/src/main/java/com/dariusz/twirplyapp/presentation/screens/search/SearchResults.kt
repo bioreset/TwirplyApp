@@ -9,19 +9,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
-import com.dariusz.twirplyapp.presentation.components.common.LoadingComponent
 import com.dariusz.twirplyapp.presentation.components.search.SearchResultsList
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
+import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
 
 @ExperimentalCoilApi
 @Composable
 fun SearchResults(
     query: String,
-    searchScreenViewModel: SearchScreenViewModel = viewModel(),
+    searchScreenViewModel: SearchScreenViewModel,
     navController: NavController,
     token: String
 ) {
@@ -45,27 +44,16 @@ fun ManageSearchResults(
     navController: NavController,
     query: String
 ) {
-    when (searchResults) {
-        is ResponseState.Loading -> {
-            LoadingComponent()
-        }
-        is ResponseState.Success -> {
-            Text(
-                "Search query: $query",
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .background(Color.Black)
-                    .fillMaxWidth(),
-                style = ThemeTypography.h1,
-            )
-            SearchResultsList(searchResults.data, navController)
-        }
-        is ResponseState.Error -> {
-            Text("No tweets")
-        }
-        else -> {
-            Text("another error search")
-        }
+    ManageResponseOnScreen(input = searchResults) {
+        Text(
+            "Search query: $query",
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(10.dp)
+                .background(Color.Black)
+                .fillMaxWidth(),
+            style = ThemeTypography.h1,
+        )
+        SearchResultsList(it, navController)
     }
 }
