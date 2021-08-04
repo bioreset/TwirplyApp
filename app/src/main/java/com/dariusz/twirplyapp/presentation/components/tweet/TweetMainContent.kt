@@ -1,4 +1,4 @@
-package com.dariusz.twirplyapp.presentation.components.tweets
+package com.dariusz.twirplyapp.presentation.components.tweet
 
 import androidx.compose.runtime.*
 import androidx.navigation.NavController

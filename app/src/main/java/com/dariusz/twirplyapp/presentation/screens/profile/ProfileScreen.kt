@@ -3,11 +3,16 @@ package com.dariusz.twirplyapp.presentation.screens.profile
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
+import com.dariusz.twirplyapp.di.RepositoryModule.provideTweetRepository
+import com.dariusz.twirplyapp.di.RepositoryModule.provideUserContextRepository
+import com.dariusz.twirplyapp.di.RepositoryModule.provideUserRepository
 import com.dariusz.twirplyapp.domain.model.*
+import com.dariusz.twirplyapp.presentation.components.profile.LikedPostsList
 import com.dariusz.twirplyapp.presentation.components.profile.ProfileFeed
 import com.dariusz.twirplyapp.presentation.components.profile.UserMentionsTimeline
 import com.dariusz.twirplyapp.presentation.components.profile.UserTweetsTimeline
 import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
+import com.dariusz.twirplyapp.utils.ViewModelUtils.composeViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -18,10 +23,18 @@ import com.google.accompanist.pager.rememberPagerState
 fun ProfileScreen(
     profileID: String,
     navController: NavController,
-    profileScreenViewModel: ProfileScreenViewModel,
     token: String,
-    pagerState: PagerState = rememberPagerState(pageCount = 2)
 ) {
+
+    val profileScreenViewModel = composeViewModel {
+        ProfileScreenViewModel(
+            provideUserRepository(),
+            provideTweetRepository(),
+            provideUserContextRepository()
+        )
+    }
+
+    val pagerState: PagerState = rememberPagerState(pageCount = 2)
 
     val profileToDisplay by remember(profileScreenViewModel) {
         profileScreenViewModel.userFullData
@@ -39,6 +52,10 @@ fun ProfileScreen(
         profileScreenViewModel.userIdBasedOnUserName
     }.collectAsState()
 
+    val userLiked by remember(profileScreenViewModel) {
+        profileScreenViewModel.likedTweets
+    }.collectAsState()
+
     ManageProfileScreen(
         profile = profileToDisplay,
         navController = navController,
@@ -48,6 +65,9 @@ fun ProfileScreen(
         },
         mentions = {
             ManageMentions(input = userMentions, navController = navController)
+        },
+        liked = {
+            ManageLiked(input = userLiked, navController = navController)
         }
     ) {
         /* TODO: FOLLOW ACTION */
@@ -58,6 +78,7 @@ fun ProfileScreen(
             profileScreenViewModel.getUserFullDataID(profileID, token)
             profileScreenViewModel.getUserTweets(profileID, token)
             profileScreenViewModel.getUserMentions(profileID, token)
+            profileScreenViewModel.getUserLiked(profileID, token)
         }
     } else {
         ManageProfileID(
@@ -80,6 +101,7 @@ fun ManageProfileScreen(
     pagerState: PagerState,
     tweets: @Composable () -> Unit,
     mentions: @Composable () -> Unit,
+    liked: @Composable () -> Unit,
     actionFollowUser: (String) -> Unit
 ) {
 
@@ -89,9 +111,10 @@ fun ManageProfileScreen(
             navController = navController,
             pagerState = pagerState,
             tweets = { tweets.invoke() },
-            mentions = { mentions.invoke() }
-        ) {
-            actionFollowUser.invoke(it)
+            mentions = { mentions.invoke() },
+            liked = { liked.invoke() }
+        ) { userID ->
+            actionFollowUser.invoke(userID)
         }
     }
 
@@ -125,6 +148,19 @@ fun ManageMentions(
 
 @ExperimentalCoilApi
 @Composable
+fun ManageLiked(
+    input: ResponseState<GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>>,
+    navController: NavController
+) {
+
+    ManageResponseOnScreen(input = input) {
+        LikedPostsList(input = it, navController = navController)
+    }
+
+}
+
+@ExperimentalCoilApi
+@Composable
 fun ManageProfileID(
     input: ResponseState<GenericResponse<UserMinimum?, Includes?, Errors?, Meta?>>,
     profileScreenViewModel: ProfileScreenViewModel,
@@ -140,6 +176,7 @@ fun ManageProfileID(
             }
             it.outputOne?.id?.let { profileScreenViewModel.getUserTweets(it, token) }
             it.outputOne?.id?.let { profileScreenViewModel.getUserMentions(it, token) }
+            it.outputOne?.id?.let { profileScreenViewModel.getUserLiked(it, token) }
         }
     }
 

@@ -3,7 +3,6 @@ package com.dariusz.twirplyapp.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dariusz.twirplyapp.data.local.AppPreferences
-import com.dariusz.twirplyapp.domain.model.AuthResponseInitial
 import com.dariusz.twirplyapp.domain.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,9 +36,6 @@ constructor(
     )
     val bearerToken: StateFlow<String> = _bearerToken
 
-    private val _initialResponse = MutableStateFlow(AuthResponseInitial())
-    val initialResponse: StateFlow<AuthResponseInitial> = _initialResponse
-
     fun getBearerTokenAndSaveIt() = viewModelScope.launch {
         val response = authRepository.fetchBearerTokenAndSaveIt()
         appPreferences.let {
@@ -50,11 +46,6 @@ constructor(
         }
 
     }
-
-    fun sendInitialResponse() = viewModelScope.launch {
-        _initialResponse.value = authRepository.requestOAuthToken()
-    }
-
 
     fun getUserLoginID() = viewModelScope.launch {
         appPreferences.getIDOfLoggedInUser().collect {

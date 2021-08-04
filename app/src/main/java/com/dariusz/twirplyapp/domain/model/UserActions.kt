@@ -6,13 +6,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class UserActions(
     @field:Json(name = "retweeted")
-    val retweet: Boolean?,
+    val retweet: Boolean? = false,
     @field:Json(name = "blocking")
-    val block: Boolean?,
+    val block: Boolean? = false,
     @field:Json(name = "liked")
-    val like: Boolean?,
+    val like: Boolean? = false,
     @field:Json(name = "following")
-    val follow: Boolean?,
+    val follow: Boolean? = false,
     @field:Json(name = "pending_follow")
-    val pendingFollow: Boolean?
+    val pendingFollow: Boolean? = false
 )

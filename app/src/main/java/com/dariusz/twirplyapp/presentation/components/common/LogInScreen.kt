@@ -15,9 +15,10 @@ import coil.annotation.ExperimentalCoilApi
 private const val linkToImage =
     "https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/auth-docs/sign-in-with-twitter-link.png.twimg.1920.png"
 
+@ExperimentalCoilApi
 @Composable
 fun LogInScreen(
-    logInAction: () -> Unit?,
+    logInAction: @Composable () -> Unit?,
     getIntoAppWithoutLoggingIn: () -> Unit
 ) {
 

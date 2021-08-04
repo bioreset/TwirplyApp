@@ -1,11 +1,10 @@
-package com.dariusz.twirplyapp.presentation.components.tweets
+package com.dariusz.twirplyapp.presentation.components.retweet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,7 +16,7 @@ import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 
 @ExperimentalCoilApi
 @Composable
-fun ShowTweet(
+fun ShowRetweet(
     response: GenericResponse<Tweet?, Includes?, Errors?, Meta?>,
     navController: NavController
 ) {
@@ -25,7 +24,7 @@ fun ShowTweet(
     val includes = response.outputTwo
     val authorInfo = includes?.user?.get(0)
 
-    DisplayTweetObject(
+    DisplayRetweetObject(
         tweetContent = tweetContent,
         authorInfo = authorInfo,
         includesFromResponse = includes,
@@ -36,27 +35,23 @@ fun ShowTweet(
 
 @ExperimentalCoilApi
 @Composable
-fun DisplayTweetObject(
+fun DisplayRetweetObject(
     tweetContent: Tweet?,
     authorInfo: UserMinimum?,
     includesFromResponse: Includes?,
     navController: NavController
-) = TweetObjectBuilder(
+) = RetweetObjectBuilder(
     tweetContentFromResponse = tweetContent,
     authorInfoFromResponse = authorInfo,
     includesFromResponse = includesFromResponse,
-    authorProfilePicture = { AuthorPicture(it) },
+    authorProfilePicture = { AuthorPictureRetweet(it) },
     authorandTweetInformation = { author, tweet ->
-        AuthorInfoAndOther(
+        AuthorInfoAndOtherRetweet(
             author,
             tweet
         )
     },
-    tweetIconContent = { tweet, nav ->
-        TweetActions(tweet, nav)
-    },
-    tweetDivider = { Divider(thickness = 0.5.dp) },
-    actionOpenProfile = {
+    actionOpenFullTweet = {
         navController.navigateToWithArgument(
             Screens.AppScreens.ProfileScreen.route,
             it
@@ -67,18 +62,25 @@ fun DisplayTweetObject(
 
 @ExperimentalCoilApi
 @Composable
-fun TweetObjectBuilder(
+fun RetweetObjectBuilder(
     tweetContentFromResponse: Tweet?,
     authorInfoFromResponse: UserMinimum?,
     includesFromResponse: Includes?,
     authorProfilePicture: @Composable (UserMinimum) -> Unit,
     authorandTweetInformation: @Composable (UserMinimum, Tweet) -> Unit,
-    tweetIconContent: @Composable (Tweet, NavController) -> Unit,
-    tweetDivider: @Composable () -> Unit,
-    actionOpenProfile: (String) -> Unit,
+    actionOpenFullTweet: (String) -> Unit,
     navController: NavController
 ) {
-    Row {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = true, onClick = {
+                if (tweetContentFromResponse != null) {
+                    actionOpenFullTweet.invoke(tweetContentFromResponse.id)
+                }
+            })
+    )
+    {
         if (authorInfoFromResponse != null) {
             authorProfilePicture(authorInfoFromResponse)
         }
@@ -88,15 +90,7 @@ fun TweetObjectBuilder(
                 .fillMaxWidth()
         ) {
             if (authorInfoFromResponse != null && tweetContentFromResponse != null) {
-                Column(
-                    Modifier.clickable(enabled = true, onClick = {
-                        tweetContentFromResponse.id.let {
-                            actionOpenProfile.invoke(
-                                it
-                            )
-                        }
-                    })
-                ) {
+                Column {
                     authorandTweetInformation.invoke(
                         authorInfoFromResponse,
                         tweetContentFromResponse
@@ -104,12 +98,12 @@ fun TweetObjectBuilder(
                 }
             }
             if (tweetContentFromResponse != null && includesFromResponse != null) {
-                DisplayMainContent(tweetContentFromResponse, includesFromResponse, navController)
+                DisplayRetweetMainContent(
+                    tweetContentFromResponse,
+                    includesFromResponse,
+                    navController
+                )
             }
-            if (tweetContentFromResponse != null) {
-                tweetIconContent.invoke(tweetContentFromResponse, navController)
-            }
-            tweetDivider.invoke()
         }
     }
 }

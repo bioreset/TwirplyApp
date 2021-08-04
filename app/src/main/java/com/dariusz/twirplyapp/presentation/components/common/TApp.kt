@@ -1,8 +1,6 @@
 package com.dariusz.twirplyapp.presentation.components.common
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
@@ -14,7 +12,7 @@ import com.dariusz.twirplyapp.presentation.MainViewModel
 import com.dariusz.twirplyapp.presentation.components.navigation.BottomBar
 import com.dariusz.twirplyapp.presentation.components.navigation.MainNavigationHost
 import com.dariusz.twirplyapp.presentation.components.theme.TwirplyAppTheme
-import com.dariusz.twirplyapp.utils.ViewModelUtils.viewModel
+import com.dariusz.twirplyapp.utils.ViewModelUtils.composeViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 @ExperimentalCoilApi
@@ -25,12 +23,16 @@ fun TApp() {
     val navHostController = rememberNavController()
     val currentContext = LocalContext.current
     val theme = remember { AppTheme() }
-    val mainViewModel = viewModel {
+    val mainViewModel = composeViewModel {
         MainViewModel(
             provideAuthRepository(),
             provideAppPreferences(currentContext)
         )
     }
+
+    val tokenRemembered by remember(mainViewModel) {
+        mainViewModel.bearerToken
+    }.collectAsState()
 
     LaunchedEffect(Unit) {
         mainViewModel.getBearerTokenAndSaveIt()
@@ -42,7 +44,7 @@ fun TApp() {
             content = {
                 MainNavigationHost(
                     navHostController,
-                    mainViewModel
+                    tokenRemembered
                 )
             }
         )

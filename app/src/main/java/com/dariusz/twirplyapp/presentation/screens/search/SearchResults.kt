@@ -11,19 +11,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
+import com.dariusz.twirplyapp.di.RepositoryModule.provideSearchRepository
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.search.SearchResultsList
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
+import com.dariusz.twirplyapp.utils.ViewModelUtils.composeViewModel
 
 @ExperimentalCoilApi
 @Composable
 fun SearchResults(
     query: String,
-    searchScreenViewModel: SearchScreenViewModel,
     navController: NavController,
     token: String
 ) {
+
+    val searchScreenViewModel = composeViewModel {
+        SearchScreenViewModel(
+            provideSearchRepository()
+        )
+    }
 
     val searchResultsList by remember(searchScreenViewModel) {
         searchScreenViewModel.finalSearchResults

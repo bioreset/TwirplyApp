@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.domain.model.UserMinimum.Companion.minimizeUser
-import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweetSeparate
+import com.dariusz.twirplyapp.presentation.components.tweet.DisplayTweetSeparate
 
 @ExperimentalCoilApi
 @Composable

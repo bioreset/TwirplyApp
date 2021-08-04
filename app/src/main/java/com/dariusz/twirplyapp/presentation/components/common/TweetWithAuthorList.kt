@@ -6,7 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.*
-import com.dariusz.twirplyapp.presentation.components.tweets.DisplayTweetSeparate
+import com.dariusz.twirplyapp.presentation.components.retweet.DisplayRetweetSeparate
+import com.dariusz.twirplyapp.presentation.components.tweet.DisplayTweetSeparate
 
 @ExperimentalCoilApi
 @Composable
@@ -24,6 +25,26 @@ fun TweetWithAuthorList(
                 item.first.authorID == it.id
             }
             DisplayTweetSeparate(item.first, authorOfTweet, includes, navController)
+        }
+    }
+}
+
+@ExperimentalCoilApi
+@Composable
+fun RetweetWithAuthorList(
+    input: GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>,
+    navController: NavController
+) {
+    val listOfTweets = input.outputOne.orEmpty()
+    val listOfUsers = input.outputTwo?.user.orEmpty()
+    val includes = input.outputTwo
+
+    LazyColumn {
+        items(listOfTweets.zip(listOfUsers)) { item ->
+            val authorOfTweet = listOfUsers.find {
+                item.first.authorID == it.id
+            }
+            DisplayRetweetSeparate(item.first, authorOfTweet, includes, navController)
         }
     }
 }

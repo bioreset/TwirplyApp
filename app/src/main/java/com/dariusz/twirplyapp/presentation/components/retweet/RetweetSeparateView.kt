@@ -1,11 +1,10 @@
-package com.dariusz.twirplyapp.presentation.components.tweets
+package com.dariusz.twirplyapp.presentation.components.retweet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -15,43 +14,34 @@ import com.dariusz.twirplyapp.domain.model.Includes
 import com.dariusz.twirplyapp.domain.model.Tweet
 import com.dariusz.twirplyapp.domain.model.UserMinimum
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
+import com.dariusz.twirplyapp.presentation.components.tweet.DisplayMainContent
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 
 @ExperimentalCoilApi
 @Composable
-fun DisplayTweetSeparate(
+fun DisplayRetweetSeparate(
     tweetContent: Tweet?,
     authorInfo: UserMinimum?,
     includesFromResponse: Includes?,
     navController: NavController?
 ) = navController?.let { it ->
-    TweetBuilderSeparate(
+    RetweetBuilderSeparate(
         tweetContentFromResponse = tweetContent,
         authorInfoFromResponse = authorInfo,
         includesFromResponse = includesFromResponse,
         authorProfilePicture = { author ->
-            AuthorPicture(author)
+            AuthorPictureRetweet(author)
         },
         authorandTweetInformation = { author, tweet ->
-            AuthorInfoAndOther(
+            AuthorInfoAndOtherRetweet(
                 author,
                 tweet
             )
         },
-        tweetIconContent = { tweet, nav ->
-            TweetActions(tweet, nav)
-        },
-        tweetDivider = { Divider(thickness = 0.5.dp) },
-        actionOnClick = { string ->
+        actionOnClick = { id ->
             navController.navigateToWithArgument(
                 Screens.AppScreens.TweetScreen.route,
-                string
-            )
-        },
-        actionOpenProfile = { string ->
-            navController.navigateToWithArgument(
-                Screens.AppScreens.ProfileScreen.route,
-                string
+                id
             )
         },
         navController = it
@@ -60,19 +50,24 @@ fun DisplayTweetSeparate(
 
 @ExperimentalCoilApi
 @Composable
-fun TweetBuilderSeparate(
+fun RetweetBuilderSeparate(
     tweetContentFromResponse: Tweet?,
     authorInfoFromResponse: UserMinimum?,
     includesFromResponse: Includes?,
     authorProfilePicture: @Composable (UserMinimum) -> Unit,
     authorandTweetInformation: @Composable (UserMinimum, Tweet) -> Unit,
-    tweetIconContent: @Composable (Tweet, NavController) -> Unit,
-    tweetDivider: @Composable () -> Unit,
     actionOnClick: (String) -> Unit,
-    actionOpenProfile: (String) -> Unit,
     navController: NavController
 ) {
-    Row {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = true, onClick = {
+                if (tweetContentFromResponse != null) {
+                    actionOnClick.invoke(tweetContentFromResponse.id)
+                }
+            })
+    ) {
         if (authorInfoFromResponse != null) {
             authorProfilePicture(authorInfoFromResponse)
         }
@@ -82,13 +77,7 @@ fun TweetBuilderSeparate(
                 .fillMaxWidth()
         ) {
             if (authorInfoFromResponse != null && tweetContentFromResponse != null) {
-                Column(Modifier.clickable(enabled = true, onClick = {
-                    authorInfoFromResponse.id.let {
-                        actionOpenProfile.invoke(
-                            it
-                        )
-                    }
-                })) {
+                Column {
                     authorandTweetInformation.invoke(
                         authorInfoFromResponse,
                         tweetContentFromResponse
@@ -111,10 +100,6 @@ fun TweetBuilderSeparate(
                     )
                 }
             }
-            if (tweetContentFromResponse != null) {
-                tweetIconContent.invoke(tweetContentFromResponse, navController)
-            }
-            tweetDivider.invoke()
         }
     }
 }

@@ -3,12 +3,13 @@ package com.dariusz.twirplyapp.presentation.components.common
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import kotlinx.coroutines.launch
 
 @Composable
 fun OpenLink(url: String) {
@@ -24,10 +25,8 @@ fun WebViewContainer(
     webViewClient: WebViewClient
 ) {
 
-    val currentCoroutineScope = rememberCoroutineScope()
-
-    AndroidView({ webView }) { webViewX ->
-        currentCoroutineScope.launch {
+    Column(modifier = Modifier.fillMaxSize()) {
+        AndroidView({ webView }) { webViewX ->
             webViewX.webViewClient = webViewClient
             webViewX.loadUrl(url)
         }

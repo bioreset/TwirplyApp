@@ -37,6 +37,7 @@ fun ProfileFeed(
     pagerState: PagerState,
     tweets: @Composable () -> Unit,
     mentions: @Composable () -> Unit,
+    liked: @Composable () -> Unit,
     actionFollow: (String) -> Unit
 ) {
     val userInfoFull = user.outputOne
@@ -60,7 +61,8 @@ fun ProfileFeed(
             TabsContent(
                 pagerState = pagerState,
                 tweets = { tweets.invoke() },
-                mentions = { mentions.invoke() }
+                mentions = { mentions.invoke() },
+                liked = { liked.invoke() }
             )
         }
     }
@@ -199,6 +201,15 @@ fun Tabs(pagerState: PagerState) {
                 }
             }
         )
+        Tab(
+            text = { Text("Liked tweets", style = ThemeTypography.body1) },
+            selected = pagerState.currentPage == 2,
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(2)
+                }
+            }
+        )
     }
 }
 
@@ -207,7 +218,8 @@ fun Tabs(pagerState: PagerState) {
 fun TabsContent(
     pagerState: PagerState,
     tweets: @Composable () -> Unit,
-    mentions: @Composable () -> Unit
+    mentions: @Composable () -> Unit,
+    liked: @Composable () -> Unit
 ) {
     HorizontalPager(state = pagerState) { page ->
         when (page) {
@@ -216,6 +228,9 @@ fun TabsContent(
             }
             1 -> {
                 mentions.invoke()
+            }
+            2 -> {
+                liked.invoke()
             }
         }
     }

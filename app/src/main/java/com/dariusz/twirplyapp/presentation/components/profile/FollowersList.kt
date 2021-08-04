@@ -8,4 +8,4 @@ import com.dariusz.twirplyapp.presentation.components.common.CompactUserInfoList
 @ExperimentalCoilApi
 @Composable
 fun FollowersList(input: List<UserMinimum>, actionOpenProfile: (String) -> Unit) =
-    CompactUserInfoList(input, actionOpenProfile)
+    CompactUserInfoList("Followers", input, actionOpenProfile)

@@ -23,6 +23,9 @@ sealed class Screens(val route: String, val title: String) {
         object FollowersScreen : AppScreens("followers", "Followers", null)
         object FollowingScreen : AppScreens("following", "Following", null)
         object TweetScreen : AppScreens("tweet", "Tweet", null)
+        object BlockedUsersScreen : AppScreens("blockedusers", "Blocked users", null)
+        object RetweetsScreen : AppScreens("retweets", "Retweets", null)
+        object WhoLikedTweet : AppScreens("wholiked", "Likes", null)
     }
 }
 

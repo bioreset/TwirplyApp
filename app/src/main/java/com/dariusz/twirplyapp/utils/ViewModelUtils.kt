@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dariusz.twirplyapp.domain.model.GenericResponse
 import com.dariusz.twirplyapp.domain.model.ResponseState
+import com.dariusz.twirplyapp.domain.model.UserActions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ object ViewModelUtils {
 
     @Suppress("UNCHECKED_CAST")
     @Composable
-    inline fun <reified VM : ViewModel> viewModel(crossinline viewModel: () -> VM): VM =
+    inline fun <reified VM : ViewModel> composeViewModel(crossinline viewModel: () -> VM): VM =
         viewModel(factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return viewModel.invoke() as T
@@ -29,7 +30,6 @@ object ViewModelUtils {
         dataFromAction: GenericResponse<A, B, C, D>
     ) = mutableInput.getResultOfGenericResponse(dataFromAction)
 
-
     private fun <A, B, C, D> MutableStateFlow<ResponseState<GenericResponse<A, B, C, D>>>.getResultOfGenericResponse(
         data: GenericResponse<A, B, C, D>
     ) {
@@ -41,7 +41,6 @@ object ViewModelUtils {
         }
     }
 
-
     private val ViewModel.ioTask
         get() = viewModelScope + Dispatchers.IO
 
@@ -49,6 +48,19 @@ object ViewModelUtils {
         action: suspend () -> Unit
     ) = ioTask.launch {
         action.invoke()
+    }
+
+    fun performUserAction(
+        actionOne: UserActions,
+        actionTwo: UserActions,
+        actionResult: MutableStateFlow<UserActions>
+    ) {
+        actionResult.value = UserActions()
+        if (actionOne.like == true || actionOne.block == true || actionOne.follow == true || actionOne.retweet == true) {
+            actionResult.value = actionOne
+        } else {
+            actionResult.value = actionTwo
+        }
     }
 
 

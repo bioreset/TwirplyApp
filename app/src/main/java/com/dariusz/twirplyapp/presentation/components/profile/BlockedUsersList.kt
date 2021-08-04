@@ -7,5 +7,6 @@ import com.dariusz.twirplyapp.presentation.components.common.CompactUserInfoList
 
 @ExperimentalCoilApi
 @Composable
-fun FollowingList(input: List<UserMinimum>, actionOpenProfile: (String) -> Unit) =
-    CompactUserInfoList("Following", input, actionOpenProfile)
+fun BlockedUsersList(input: List<UserMinimum>, actionOpenProfile: (String) -> Unit) {
+    CompactUserInfoList("Blocked users", input, actionOpenProfile)
+}

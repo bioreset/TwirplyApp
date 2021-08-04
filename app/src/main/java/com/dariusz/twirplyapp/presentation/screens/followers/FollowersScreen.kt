@@ -1,25 +1,32 @@
-package com.dariusz.twirplyapp.presentation.screens.profile
+package com.dariusz.twirplyapp.presentation.screens.followers
 
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
+import com.dariusz.twirplyapp.di.RepositoryModule.provideUserRepository
 import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
 import com.dariusz.twirplyapp.presentation.components.profile.FollowersList
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
+import com.dariusz.twirplyapp.utils.ViewModelUtils.composeViewModel
 
 @ExperimentalCoilApi
 @Composable
 fun FollowersScreen(
     profileID: String,
-    profileScreenViewModel: ProfileScreenViewModel,
     navController: NavController,
     token: String
 ) {
 
-    val followersToDisplay by remember(profileScreenViewModel) {
-        profileScreenViewModel.userFollowers
+    val followersScreenViewModel = composeViewModel {
+        FollowersScreenViewModel(
+            provideUserRepository()
+        )
+    }
+
+    val followersToDisplay by remember(followersScreenViewModel) {
+        followersScreenViewModel.userFollowers
     }.collectAsState()
 
     ManageFollowersScreen(followersToDisplay) {
@@ -30,7 +37,7 @@ fun FollowersScreen(
     }
 
     LaunchedEffect(Unit) {
-        profileScreenViewModel.getUserFollowers(profileID, token)
+        followersScreenViewModel.getUserFollowers(profileID, token)
     }
 
 }

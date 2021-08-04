@@ -1,15 +1,13 @@
-package com.dariusz.twirplyapp.presentation.components.tweets
+package com.dariusz.twirplyapp.presentation.components.retweet
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +23,12 @@ import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.common.DisplayImage
 import com.dariusz.twirplyapp.presentation.components.common.PlayVideo
 import com.dariusz.twirplyapp.presentation.components.common.buildFullString
-import com.dariusz.twirplyapp.presentation.components.theme.ThemeShapes
 import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 import com.dariusz.twirplyapp.utils.DateUtils.countElapsedTime
 
 @ExperimentalCoilApi
 @Composable
-fun AuthorPicture(userInfo: UserMinimum) {
+fun AuthorPictureRetweet(userInfo: UserMinimum) {
     userInfo.profileImageUrl?.let {
         DisplayImage(
             url = it, modifier = Modifier
@@ -43,7 +40,7 @@ fun AuthorPicture(userInfo: UserMinimum) {
 
 @SuppressLint("NewApi")
 @Composable
-fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?) {
+fun AuthorInfoAndOtherRetweet(userInfo: UserMinimum?, tweetInfo: Tweet?) {
     if (userInfo != null && tweetInfo != null) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -75,88 +72,9 @@ fun AuthorInfoAndOther(userInfo: UserMinimum?, tweetInfo: Tweet?) {
     }
 }
 
-@Composable
-fun TweetIconSection(
-    tweet: Tweet,
-    actionReply: (Tweet) -> Unit,
-    actionRetweet: (Tweet) -> Unit,
-    actionLike: (Tweet) -> Unit,
-    actionShare: (Tweet) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        IconButton(onClick = { actionReply.invoke(tweet) }) {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = Color.LightGray
-                )
-                Text(
-                    text = tweet.publicMetrics.replyCount.toString(),
-                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
-                    color = Color.LightGray,
-                    style = ThemeTypography.body1
-                )
-            }
-        }
-        IconButton(onClick = { actionRetweet.invoke(tweet) }) {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = Color.LightGray
-                )
-                Text(
-                    text = tweet.publicMetrics.retweetCount.toString(),
-                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
-                    color = Color.LightGray,
-                    style = ThemeTypography.body1
-                )
-            }
-        }
-        IconButton(onClick = { actionLike.invoke(tweet) }) {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = Color.LightGray
-                )
-                Text(
-                    text = tweet.publicMetrics.likesCount.toString(),
-                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
-                    color = Color.LightGray,
-                    style = ThemeTypography.body1
-                )
-            }
-        }
-        IconButton(onClick = { actionShare.invoke(tweet) }) {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = Color.LightGray
-                )
-                Text(
-                    text = tweet.publicMetrics.quoteCount.toString(),
-                    modifier = Modifier.padding(start = 6.dp, bottom = 1.dp),
-                    color = Color.LightGray,
-                    style = ThemeTypography.body1
-                )
-            }
-        }
-    }
-}
-
 @ExperimentalCoilApi
 @Composable
-fun TweetImage(media: Media) {
+fun RetweetImage(media: Media) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -175,7 +93,7 @@ fun TweetImage(media: Media) {
 
 @SuppressLint("NewApi")
 @Composable
-fun TweetPoll(poll: Poll) {
+fun RetweetPoll(poll: Poll) {
     val counter = remember { mutableStateOf(0) }
     Column(
         modifier = Modifier
@@ -205,7 +123,7 @@ fun TweetPoll(poll: Poll) {
 }
 
 @Composable
-fun TweetMedia(url: String, media: Media) {
+fun RetweetMedia(url: String, media: Media) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,19 +141,7 @@ fun TweetMedia(url: String, media: Media) {
 
 @ExperimentalCoilApi
 @Composable
-fun TweetMentioned(tweetData: Tweet, author: UserMinimum) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(width = 0.25.dp, color = Color.Gray, shape = ThemeShapes.small)
-    ) {
-        DisplayTweetSeparate(tweetData, author, null, null)
-    }
-}
-
-@ExperimentalCoilApi
-@Composable
-fun TweetUrlObject(urlObject: UrlObject) {
+fun RetweetUrlObject(urlObject: UrlObject) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -274,18 +180,8 @@ fun TweetUrlObject(urlObject: UrlObject) {
 }
 
 @Composable
-fun TweetTextContent(tweet: Tweet, entity: Entity, navController: NavController) {
+fun RetweetTextContent(tweet: Tweet, entity: Entity, navController: NavController) {
     val tweetContent = tweet.content
     val finalString = buildFullString(tweetContent, entity, navController)
     Text(text = finalString, style = ThemeTypography.body1)
 }
-
-@Composable
-fun TweetActions(tweet: Tweet, navController: NavController) =
-    TweetIconSection(
-        tweet = tweet,
-        actionReply = { /*TODO*/ },
-        actionRetweet = { /*TODO*/ },
-        actionLike = { /*TODO*/ },
-        actionShare = { /*TODO*/ }
-    )

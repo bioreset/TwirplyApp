@@ -21,14 +21,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.domain.model.UserMinimum
+import com.dariusz.twirplyapp.presentation.components.theme.ThemeTypography
 
 @ExperimentalCoilApi
 @Composable
 fun CompactUserInfoList(
+    title: String,
     input: List<UserMinimum>,
     actionOpenProfile: (String) -> Unit
 ) {
     LazyColumn {
+        item {
+            TitleText(title)
+        }
         items(input) { item ->
             CompactUserInfo(item, actionOpenProfile)
         }
@@ -102,3 +107,8 @@ fun AuthorInfo(userInfo: UserMinimum) {
         )
     }
 }
+
+@Composable
+fun TitleText(
+    text: String
+) = Text(text, style = ThemeTypography.h2, modifier = Modifier.padding(4.dp))
