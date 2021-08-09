@@ -1,4 +1,4 @@
-package com.dariusz.twirplyapp.presentation.screens.retweets
+package com.dariusz.twirplyapp.presentation.screens.retweeted
 
 import androidx.lifecycle.ViewModel
 import com.dariusz.twirplyapp.domain.model.*

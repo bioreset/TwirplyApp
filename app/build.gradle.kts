@@ -13,8 +13,8 @@ android {
         applicationId = "com.dariusz.twirplyapp"
         minSdk = 24
         targetSdk = 30
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 11
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,7 +39,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.0.0"
+        kotlinCompilerExtensionVersion = "1.0.1"
     }
 }
 
@@ -49,19 +49,19 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("com.google.android.material:material:1.4.0")
 
-    implementation("androidx.compose.ui:ui:1.0.0")
-    implementation("androidx.compose.material:material:1.0.0")
-    implementation("androidx.compose.ui:ui-tooling:1.0.0")
+    implementation("androidx.compose.ui:ui:1.0.1")
+    implementation("androidx.compose.material:material:1.0.1")
+    implementation("androidx.compose.ui:ui-tooling:1.0.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
-    implementation("androidx.activity:activity-compose:1.3.0")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-beta01")
+    implementation("androidx.activity:activity-compose:1.3.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("androidx.compose.material:material-icons-extended:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.0.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
 
-    implementation("io.coil-kt:coil-compose:1.3.1")
-    implementation("com.google.accompanist:accompanist-pager:0.15.0")
-    implementation("com.google.accompanist:accompanist-pager-indicators:0.15.0")
+    implementation("io.coil-kt:coil-compose:1.3.2")
+    implementation("com.google.accompanist:accompanist-pager:0.16.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.16.0")
 
     implementation("com.google.dagger:hilt-android:2.38.1")
     kapt("com.google.dagger:hilt-android-compiler:2.38.1")
@@ -76,10 +76,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0-rc02")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     implementation("com.google.android.exoplayer:exoplayer:2.14.2")
     implementation("com.google.android.exoplayer:exoplayer-ui:2.14.2")
@@ -87,5 +87,5 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.1")
 }

@@ -20,7 +20,7 @@ interface TwirplyAppApiUserContext {
         @Query("poll.fields") tweetPoll: String? = API_POLL_FIELDS,
         @Query("media.fields") tweetMedia: String? = API_MEDIA_FIELDS,
         @Query("user.fields") tweetUser: String = API_USER_FIELDS_COMPACT
-    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
     @GET("2/users/{user_id}/liked_tweets")
     suspend fun fetchLikedTweets(

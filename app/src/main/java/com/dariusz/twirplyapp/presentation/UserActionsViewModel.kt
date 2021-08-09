@@ -3,8 +3,8 @@ package com.dariusz.twirplyapp.presentation
 import androidx.lifecycle.ViewModel
 import com.dariusz.twirplyapp.domain.model.UserActions
 import com.dariusz.twirplyapp.domain.repository.useractions.UserActionsRepository
+import com.dariusz.twirplyapp.utils.UserActionUtils.performUserAction
 import com.dariusz.twirplyapp.utils.ViewModelUtils.launchVMTask
-import com.dariusz.twirplyapp.utils.ViewModelUtils.performUserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,16 +24,12 @@ class UserActionsViewModel
         _actionResult
 
     fun actionBlock(userID: String, targetUserID: String, token: String) = launchVMTask {
-        reset()
-        val blockAction =
-            userActionsRepository.makeBlockUserAction(userID, targetUserID, token) ?: UserActions()
-        val unblockAction = userActionsRepository.makeUnblockUserAction(userID, targetUserID, token)
-            ?: UserActions()
-        if (blockAction.block == true) {
-            _actionResult.value = blockAction
-        } else {
-            _actionResult.value = unblockAction
-        }
+        performUserAction(
+            userActionsRepository.makeBlockUserAction(userID, targetUserID, token) ?: UserActions(),
+            userActionsRepository.makeUnblockUserAction(userID, targetUserID, token)
+                ?: UserActions(),
+            _actionResult
+        )
     }
 
     fun actionLike(userID: String, targetTweetID: String, token: String) = launchVMTask {
@@ -65,10 +61,5 @@ class UserActionsViewModel
             _actionResult
         )
     }
-
-    private fun reset() {
-        _actionResult.value = UserActions()
-    }
-
 
 }

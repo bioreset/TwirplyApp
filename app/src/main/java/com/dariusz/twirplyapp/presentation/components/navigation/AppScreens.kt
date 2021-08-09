@@ -16,6 +16,7 @@ sealed class Screens(val route: String, val title: String) {
         route,
         title
     ) {
+        //main navhost
         object FeedScreen : AppScreens("feed", "Feed", Icons.Default.Home)
         object SearchScreen : AppScreens("search", "Search", Icons.Default.Search)
         object SearchResults : AppScreens("searchresults", "Search Results", null)
@@ -24,8 +25,13 @@ sealed class Screens(val route: String, val title: String) {
         object FollowingScreen : AppScreens("following", "Following", null)
         object TweetScreen : AppScreens("tweet", "Tweet", null)
         object BlockedUsersScreen : AppScreens("blockedusers", "Blocked users", null)
-        object RetweetsScreen : AppScreens("retweets", "Retweets", null)
+        object WhoRetweetedScreen : AppScreens("whoretweeted", "Who retweeted", null)
         object WhoLikedTweet : AppScreens("wholiked", "Likes", null)
+        object RetweetsScreen : AppScreens("retweets", "Retweets", null)
+
+        //secondary navhost
+        object SplashScreen : AppScreens("splash", "Splash", null)
+        object WebScreen : AppScreens("web", "Web", null)
     }
 }
 

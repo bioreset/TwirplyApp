@@ -14,8 +14,8 @@ import com.dariusz.twirplyapp.domain.model.Media
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import kotlinx.coroutines.launch
 
+//Twitter API v2 does not provide url to video as of August 2021
 
 @Composable
 fun PlayVideo(url: String, media: Media) {
@@ -50,19 +50,17 @@ fun VideoPlayerContainer(
         }
     }
 
-    val currentCoroutineScope = rememberCoroutineScope()
     AndroidView(
         { playerView }, modifier = Modifier
             .fillMaxWidth()
             .heightIn(150.dp)
     ) { playerViewX ->
-        currentCoroutineScope.launch {
-            player.prepare()
-            player.setMediaItem(mediaItem)
-            player.playWhenReady = autoPlayStatus.value
-            player.seekTo(videoPosition.value)
-            playerViewX.player = player
-        }
+        player.prepare()
+        player.setMediaItem(mediaItem)
+        player.playWhenReady = autoPlayStatus.value
+        player.seekTo(videoPosition.value)
+        playerViewX.player = player
+
     }
 
 }

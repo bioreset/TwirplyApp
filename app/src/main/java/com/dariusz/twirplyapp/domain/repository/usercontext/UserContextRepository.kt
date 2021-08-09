@@ -9,7 +9,7 @@ interface UserContextRepository {
     suspend fun fetchRetweets(
         tweetID: String,
         token: String
-    ): GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>
+    ): GenericResponse<List<Tweet>?, Includes?, Errors?, Meta?>
 
     suspend fun fetchLikedTweets(
         userID: String,

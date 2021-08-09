@@ -1,34 +1,34 @@
-package com.dariusz.twirplyapp.presentation.screens.blocked
+package com.dariusz.twirplyapp.presentation.screens.retweeted
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.di.RepositoryModule.provideUserContextRepository
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
-import com.dariusz.twirplyapp.presentation.components.profile.BlockedUsersList
+import com.dariusz.twirplyapp.presentation.components.tweet.WhoRetweetedList
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
 import com.dariusz.twirplyapp.utils.ScreenUtils.DisplayScreen
 
 @ExperimentalCoilApi
 @Composable
-fun BlockedUsersScreen(
-    profileID: String,
+fun WhoRetweetedScreen(
+    tweetID: String,
     navController: NavController,
     token: String
 ) {
     DisplayScreen(
-        viewModel = BlockedUsersScreenViewModel(provideUserContextRepository()),
+        viewModel = WhoRetweetedScreenViewModel(provideUserContextRepository()),
         inputFromVM = { viewModel ->
-            viewModel.blockedUsers
+            viewModel.whoRetweeted
         },
         launchEffect = { viewModel ->
-            viewModel.getBlockedUsers(profileID, token)
+            viewModel.fetchRetweets(tweetID, token)
         },
         composable = { responseState ->
             ManageResponseOnScreen(responseState) { response ->
                 response.outputOne?.let { list ->
-                    BlockedUsersList(list) { userID ->
+                    WhoRetweetedList(list) { userID ->
                         navController.navigateToWithArgument(
                             Screens.AppScreens.ProfileScreen.route,
                             userID

@@ -1,15 +1,14 @@
 package com.dariusz.twirplyapp.presentation.screens.following
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.dariusz.twirplyapp.di.RepositoryModule.provideUserRepository
-import com.dariusz.twirplyapp.domain.model.*
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
 import com.dariusz.twirplyapp.presentation.components.profile.FollowingList
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 import com.dariusz.twirplyapp.utils.ResponseUtils.ManageResponseOnScreen
-import com.dariusz.twirplyapp.utils.ViewModelUtils.composeViewModel
+import com.dariusz.twirplyapp.utils.ScreenUtils.DisplayScreen
 
 @ExperimentalCoilApi
 @Composable
@@ -18,40 +17,25 @@ fun FollowingScreen(
     navController: NavController,
     token: String
 ) {
-
-    val followingScreenViewModel = composeViewModel {
-        FollowingScreenViewModel(
-            provideUserRepository()
-        )
-    }
-
-    val followingToDisplay by remember(followingScreenViewModel) {
-        followingScreenViewModel.userFollowing
-    }.collectAsState()
-
-    ManageFollowingScreen(followingToDisplay) {
-        navController.navigateToWithArgument(
-            Screens.AppScreens.ProfileScreen.route,
-            it
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        followingScreenViewModel.getUserFollowing(profileID, token)
-    }
-}
-
-@ExperimentalCoilApi
-@Composable
-fun ManageFollowingScreen(
-    input: ResponseState<GenericResponse<List<UserMinimum>?, Includes?, Errors?, Meta?>>,
-    action: (String) -> Unit
-) {
-    ManageResponseOnScreen(input = input) { response ->
-        response.outputOne?.let { list ->
-            FollowingList(input = list) { userID ->
-                action.invoke(userID)
+    DisplayScreen(
+        viewModel = FollowingScreenViewModel(provideUserRepository()),
+        inputFromVM = { viewModel ->
+            viewModel.userFollowing
+        },
+        launchEffect = { viewModel ->
+            viewModel.getUserFollowing(profileID, token)
+        },
+        composable = { responseState ->
+            ManageResponseOnScreen(responseState) { response ->
+                response.outputOne?.let { list ->
+                    FollowingList(list) { userID ->
+                        navController.navigateToWithArgument(
+                            Screens.AppScreens.ProfileScreen.route,
+                            userID
+                        )
+                    }
+                }
             }
         }
-    }
+    )
 }

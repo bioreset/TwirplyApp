@@ -54,7 +54,6 @@ fun RetweetMainContentBuilder(
     }
 
     val tweetAttachments = tweetData?.attachments
-    val referencedTweets = tweetData?.referencedTweets
     val linkShared = tweetData?.entities?.urls
 
     var linkStatus by remember { mutableStateOf(false) }
@@ -80,18 +79,6 @@ fun RetweetMainContentBuilder(
                     tweetDisplayImage.invoke(mediaObject)
                     linkStatus = true
                 }
-            }
-        }
-    }
-
-    if (referencedTweets != null) {
-        val referencedTweet = referencedTweets[0]
-        if (referencedTweet.type == "retweeted") {
-            val tweetObject = tweetIncludes?.tweet?.find {
-                referencedTweet.tweetID == it.id
-            }
-            val authorObject = tweetIncludes?.user?.find {
-                tweetObject?.authorID == it.id
             }
         }
     }

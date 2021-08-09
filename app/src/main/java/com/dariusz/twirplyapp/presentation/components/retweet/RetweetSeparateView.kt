@@ -14,7 +14,6 @@ import com.dariusz.twirplyapp.domain.model.Includes
 import com.dariusz.twirplyapp.domain.model.Tweet
 import com.dariusz.twirplyapp.domain.model.UserMinimum
 import com.dariusz.twirplyapp.presentation.components.navigation.Screens
-import com.dariusz.twirplyapp.presentation.components.tweet.DisplayMainContent
 import com.dariusz.twirplyapp.utils.NavigationUtils.navigateToWithArgument
 
 @ExperimentalCoilApi
@@ -39,7 +38,7 @@ fun DisplayRetweetSeparate(
             )
         },
         actionOnClick = { id ->
-            navController.navigateToWithArgument(
+            it.navigateToWithArgument(
                 Screens.AppScreens.TweetScreen.route,
                 id
             )
@@ -93,7 +92,7 @@ fun RetweetBuilderSeparate(
                         )
                     }
                 })) {
-                    DisplayMainContent(
+                    DisplayRetweetMainContent(
                         tweetContentFromResponse,
                         includesFromResponse,
                         navController

@@ -41,7 +41,7 @@ fun SearchBox(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search,
             ),
-            leadingIcon = { Icons.Filled.Search.tintColor.blue },
+            leadingIcon = { Icons.Filled.Search.tintColor.alpha },
             keyboardActions = KeyboardActions(
                 onSearch = {
                     keyboardController?.hide()

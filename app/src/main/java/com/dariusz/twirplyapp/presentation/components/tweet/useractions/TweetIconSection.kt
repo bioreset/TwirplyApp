@@ -121,7 +121,6 @@ fun LikeTweet(
     val likeStatus = remember { mutableStateOf(false) }
 
     if (!likeStatus.value) {
-
         IconButton(onClick = { actionLike.invoke(tweet.id) }) {
             Row {
                 Icon(
@@ -136,7 +135,7 @@ fun LikeTweet(
         IconButton(onClick = { actionLike.invoke(tweet.id) }) {
             Row {
                 Icon(
-                    imageVector = Icons.Default.Favorite,
+                    imageVector = Icons.Filled.Favorite,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
                     tint = Color.Blue

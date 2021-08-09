@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dariusz.twirplyapp.domain.model.GenericResponse
 import com.dariusz.twirplyapp.domain.model.ResponseState
-import com.dariusz.twirplyapp.domain.model.UserActions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -49,19 +48,5 @@ object ViewModelUtils {
     ) = ioTask.launch {
         action.invoke()
     }
-
-    fun performUserAction(
-        actionOne: UserActions,
-        actionTwo: UserActions,
-        actionResult: MutableStateFlow<UserActions>
-    ) {
-        actionResult.value = UserActions()
-        if (actionOne.like == true || actionOne.block == true || actionOne.follow == true || actionOne.retweet == true) {
-            actionResult.value = actionOne
-        } else {
-            actionResult.value = actionTwo
-        }
-    }
-
 
 }

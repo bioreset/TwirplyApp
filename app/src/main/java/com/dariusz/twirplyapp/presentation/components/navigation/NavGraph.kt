@@ -13,9 +13,12 @@ import com.dariusz.twirplyapp.presentation.screens.followers.FollowersScreen
 import com.dariusz.twirplyapp.presentation.screens.following.FollowingScreen
 import com.dariusz.twirplyapp.presentation.screens.likes.WhoLikedTweetScreen
 import com.dariusz.twirplyapp.presentation.screens.profile.ProfileScreen
-import com.dariusz.twirplyapp.presentation.screens.retweets.WhoRetweetedScreen
+import com.dariusz.twirplyapp.presentation.screens.retweeted.WhoRetweetedScreen
+import com.dariusz.twirplyapp.presentation.screens.retweets.RetweetsScreen
 import com.dariusz.twirplyapp.presentation.screens.search.SearchResults
 import com.dariusz.twirplyapp.presentation.screens.search.SearchScreen
+import com.dariusz.twirplyapp.presentation.screens.splash.SplashScreen
+import com.dariusz.twirplyapp.presentation.screens.splash.WebScreen
 import com.dariusz.twirplyapp.presentation.screens.tweet.TweetScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 
@@ -79,7 +82,7 @@ fun MainNavigationHost(
                 token = tokenRemembered
             )
         }
-        composable(route = Screens.AppScreens.RetweetsScreen.route.plus("/{tweet_id}")) {
+        composable(route = Screens.AppScreens.WhoRetweetedScreen.route.plus("/{tweet_id}")) {
             WhoRetweetedScreen(
                 tweetID = it.arguments?.getString("tweet_id") ?: "",
                 navController = navController,
@@ -92,6 +95,31 @@ fun MainNavigationHost(
                 navController = navController,
                 token = tokenRemembered
             )
+        }
+        composable(route = Screens.AppScreens.RetweetsScreen.route.plus("/{tweet_id}")) {
+            RetweetsScreen(
+                tweetID = it.arguments?.getString("tweet_id") ?: "",
+                navController = navController,
+                token = tokenRemembered
+            )
+        }
+    }
+}
+
+@ExperimentalCoilApi
+@Composable
+fun SecondaryNavHost(
+    navController: NavController
+) {
+    NavHost(
+        navController = navController as NavHostController,
+        startDestination = Screens.AppScreens.SplashScreen.route
+    ) {
+        composable(route = Screens.AppScreens.SplashScreen.route) {
+            SplashScreen(navController)
+        }
+        composable(route = Screens.AppScreens.WebScreen.route.plus("/{url}")) {
+            WebScreen(it.arguments?.getString("url") ?: "", navController)
         }
     }
 }

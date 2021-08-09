@@ -48,7 +48,9 @@ fun rememberWebView(): WebView {
 
 @Composable
 fun rememberWebViewClient(): WebViewClient {
-    return remember {
+    val webViewClient = remember {
         WebViewClient()
     }
+    return webViewClient
 }
+
